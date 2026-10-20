@@ -1,0 +1,10 @@
+{
+  "command": "node --test tests/*.test.mjs",
+  "completedAtUtc": "2026-10-20T18:39:18Z",
+  "tests": 42,
+  "pass": 42,
+  "fail": 0,
+  "npmInvoked": false,
+  "transport": "Official CLI subprocess tests preload test-only fake Fetch. Policy tests inject mocks. No provider/model calls or real credentials.",
+  "newFeatureEvidence": "Local catalogue filter evaluated against recorded public identity/address/order facts with synthetic affinity scores. Original private live receipts are not shipped. This run made no new live calls."
+}
