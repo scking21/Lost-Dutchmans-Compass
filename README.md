@@ -52,8 +52,8 @@ There is no model provider configured. Qloo-off makes zero workflow/provider cal
 
 ## Testing distinction
 
-`npm test` currently contains32 passing tests:
-- Four run the **actual installed official CLI subprocess** against an injected, test-only in-memory provider fixture: complete describe→recommend, ambiguity, unresolved favorite, and describe→rank of three retained IDs (seven observed fixture dispatches). These verify real package workflow execution and schemas, **not live account compatibility**.
+`npm test` currently contains36 passing tests:
+- Five run the **actual installed official CLI subprocess** against an injected, test-only in-memory provider fixture: complete describe→recommend, ambiguity, unresolved favorite, and describe→rank of three retained IDs (seven observed fixture dispatches). These verify real package workflow execution and schemas, **not live account compatibility**.
 - Other tests cover subprocess termination/output bounds, fixed arguments/stdin, egress restrictions, normalized states, validation, budgets, secrets, access uncertainty and local refinement with mocks.
 
 Tests never run `qloo setup`, use a real credential, or contact Qloo/model providers. Browser rendering, hosted external access, Docker build, live Qloo compatibility and deployment remain unverified in this candidate.
@@ -75,3 +75,9 @@ Candidate sets are opaque UUID references stored server-side for fifteen minutes
 Rank receives only option IDs, option_type and the new resolved signal. It does not recheck geography, opening hours, safety or access. Provider omissions remain unranked, not negative judgments. Prior/current ordinal positions are shown; numeric affinity scores across different queries are not compared. The bounded returned query-level explainability is shown separately from Compass's query summary, with an explicit absent state. The server does not manufacture per-place causal reasons.
 
 Reservations are upper bounds. Audit networkDispatches counts completed subprocess reports; dispatchCountComplete=false means a failed or cancelled subprocess could have dispatched additional requests. The full reservation remains charged in that case. This is not an autonomous planning agent or live evidence of improved recommendations. See docs/tool-use.md for the planned human/agent-driven browser demonstration.
+
+## Official compact entity type contract
+
+Package0.1.26 resolution-provider.js reads provider `types[]`, while qloo-tools.js compactEntity omits that array. A types-only offline fixture reproduced `describe: ok` with two dispatches and our former `unresolved_seed` rejection. This is a proven compatibility defect; the first live failure's exact provider shape was not retained, so its cause is not asserted conclusively before retest.
+
+The adapter now accepts a missing scalar type for describe only with exactly one valid row and an interpretation.entity with the same UUID and expected type. Recommend's missing-type fallback requires the official operation's exact place target interpretation; rank additionally requires the same ID and place type in interpreted resolved options, plus retained-set membership. Explicit conflicting or malformed scalar types always fail. Fallback evidence is labeled separately, never represented as a provider-returned scalar field or verified access. Actual installed CLI tests exercise all three operations with types-only provider fixtures; adversarial identity, scope and contradiction tests remain fail-closed.

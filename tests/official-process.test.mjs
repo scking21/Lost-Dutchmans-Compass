@@ -10,3 +10,10 @@ test('actual official rank resolves three retained place IDs and new signal in s
  const r=await recommend({destination:'Mesa',favorite:'Arrival',type:'movie',mode:'qloo',verifiedOnly:false,action:'rank'},{key:'OFFLINE',run,rankContext});
  assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.audit.networkDispatches,7);assert.equal(r.body.operation,'rank');assert.deepEqual(r.body.cards.map(c=>c.entityId),ids.toReversed());assert.equal(r.body.rankComparison.positions[0].previousPosition,3);assert.equal(r.body.providerExplanation.scope,'query-level');
 });
+test('actual official types-array compaction preserves describe identity via interpretation and constrained place discovery',async()=>{
+ const typesFixture=fileURLToPath(new URL('./fixture-types-fetch.mjs',import.meta.url));
+ const runTypes=(operation,input)=>runHarness(operation,input,{key:'OFFLINE-TEST-NOT-A-CREDENTIAL',execute:(command,args,opts)=>executeProcess(command,['--import',typesFixture,...args],opts)});
+ const described=await runTypes('describe',{entity:'Arrival',type:'movie'});assert.equal(described.data.results[0].type,undefined);assert.equal(described.data.results[0].subtype,undefined);assert.equal(described.data.interpretation.entity.type,'urn:entity:movie');assert.equal(described.data.interpretation.entity.entityId,described.data.results[0].entity_id);
+ const r=await recommend({destination:'Mesa',favorite:'Arrival',type:'movie',mode:'qloo',verifiedOnly:false},{key:'OFFLINE',run:runTypes});assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.cards.length,1);assert.equal(r.body.audit.networkDispatches,4);assert.equal(r.body.cards[0].typeEvidence,'official workflow target constraint; entity type omitted by harness');
+ const rankContext={requestId:r.body.requestId,cards:r.body.cards};const ranked=await recommend({destination:'Mesa',favorite:'Arrival',type:'movie',mode:'qloo',verifiedOnly:false,action:'rank'},{key:'OFFLINE',run:runTypes,rankContext});assert.equal(ranked.status,200,JSON.stringify(ranked));assert.equal(ranked.body.cards[0].entityId,r.body.cards[0].entityId);assert.equal(ranked.body.audit.networkDispatches,5);
+});
