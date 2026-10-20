@@ -1,35 +1,50 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
 
 > lost-dutchmans-compass-official@0.1.0 test
 > node --test tests/*.test.mjs
 
-✔ actual pinned official exec describe and recommend run offline through provider fixtures (2040.888889ms)
-✔ actual official ambiguity stops before recommendation and offers real fixture IDs (1041.000592ms)
-✔ actual official unresolved favorite remains needs_input without fabricated result (966.050282ms)
-✔ egress rejects other hosts, paths, methods, redirects and duplicate retries (5.608464ms)
-✔ missing key, controlled failure, and off start zero subprocesses (1.112535ms)
-✔ all official terminal states are preserved honestly (3.321561ms)
-✔ unknown/malformed state and invented entity IDs fail closed (0.61124ms)
-✔ verified access requirement excludes unknown places (0.331329ms)
-✔ server rejects origin, bounds pilot budget and keeps key out of status (3.366608ms)
-✔ child args are fixed and JSON goes only through stdin; ambient secrets absent (6.372594ms)
-✔ subprocess timeout and overflow terminate without surfacing raw stderr (11.268596ms)
-✔ key reflection cannot leak through result text (0.46467ms)
-✔ key containing JSON metacharacters is also redacted after normalization (0.331229ms)
-✔ split UTF-8 request preserves the favorite exactly (1.114037ms)
-✔ aborting a child waits for close before settling (6.333485ms)
-✔ cancellation between workflows cannot start recommendation (0.445401ms)
-✔ server forwards request cancellation to workflow (0.760315ms)
-✔ uncertain child termination disables further live runs for the process (0.612061ms)
-✔ actual Node process timeout is settled only after its close event (33.87451ms)
-✔ local shortlist never reorders or changes provider scores (2.119281ms)
-✔ local exclude removes shortlist and restore keeps original provider position (0.501395ms)
-✔ local refinement cannot invent identities or mutate original provider evidence (0.364318ms)
-✔ a new brief creates empty local choices and cannot inherit prior profile annotations (0.259511ms)
-ℹ tests 23
+✔ actual pinned official exec describe and recommend run offline through provider fixtures (1887.95148ms)
+✔ actual official ambiguity stops before recommendation and offers real fixture IDs (1007.487457ms)
+✔ actual official unresolved favorite remains needs_input without fabricated result (955.741144ms)
+✔ actual official rank resolves three retained place IDs and new signal in seven bounded dispatches (1929.449584ms)
+✔ egress rejects other hosts, paths, methods, redirects and duplicate retries (3.854782ms)
+✔ missing key, controlled failure, and off start zero subprocesses (1.086175ms)
+✔ all official terminal states are preserved honestly (3.144232ms)
+✔ unknown/malformed state and invented entity IDs fail closed (0.608556ms)
+✔ verified access requirement excludes unknown places (0.374614ms)
+✔ server rejects origin, bounds pilot budget and keeps key out of status (3.81319ms)
+✔ child args are fixed and JSON goes only through stdin; ambient secrets absent (7.86688ms)
+✔ subprocess timeout and overflow terminate without surfacing raw stderr (11.345947ms)
+✔ key reflection cannot leak through result text (0.541065ms)
+✔ key containing JSON metacharacters is also redacted after normalization (0.369476ms)
+✔ split UTF-8 request preserves the favorite exactly (1.298094ms)
+✔ aborting a child waits for close before settling (5.799508ms)
+✔ cancellation between workflows cannot start recommendation (0.567404ms)
+✔ server forwards request cancellation to workflow (1.18962ms)
+✔ uncertain child termination disables further live runs for the process (1.384163ms)
+✔ actual Node process timeout is settled only after its close event (34.048202ms)
+✔ candidate sets bind browser session, destination and policy; reject forged, repeated and oversized IDs (1.833109ms)
+✔ candidate sets expire and preserve original data against mutations (0.264078ms)
+✔ HTTP rank uses session binding; malformed requests reserve nothing; discovery four plus rank seven fits twelve (7.363233ms)
+✔ rank fails closed on outsider or malformed identities; missing options stay explicitly unranked (3.580319ms)
+✔ provider explanation is bounded and missing explanation is honest (0.482847ms)
+✔ failed rank reports incomplete observed counts and keeps its full seven-credit reservation (1.905247ms)
+✔ provider detail object keys and nested metacharacter key reflections are redacted (0.919714ms)
+✔ redacted provider object key collisions preserve both bounded values safely (0.543218ms)
+✔ local shortlist never reorders or changes provider scores (1.910145ms)
+✔ local exclude removes shortlist and restore keeps original provider position (0.526843ms)
+✔ local refinement cannot invent identities or mutate original provider evidence (0.280653ms)
+✔ a new brief creates empty local choices and cannot inherit prior profile annotations (0.450208ms)
+ℹ tests 32
 ℹ suites 0
-ℹ pass 23
+ℹ pass 32
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 4134.639477
+ℹ duration_ms 5880.92663
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
