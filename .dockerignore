@@ -1,0 +1,7 @@
+node_modules
+inspected-package
+*.tgz
+.env*
+.git
+tests
+evidence

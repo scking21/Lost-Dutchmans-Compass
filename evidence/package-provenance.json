@@ -1,0 +1,14 @@
+{
+  "name": "@qloo/qloo-harness",
+  "version": "0.1.26",
+  "shasum": "f1718342fa01cd70a6809b3f17ad070c0372a3dd",
+  "integrity": "sha512-UKTIATukMMcQZ7MQOVQ+iqI4yW8oRh9jQxQzOSuuNPmF6mTQrVFs2yyIKOhLssOggw786fR1cNEX8HhbqRS/cA==",
+  "size": 193925,
+  "source": "https://registry.npmjs.org/@qloo/qloo-harness/-/qloo-harness-0.1.26.tgz",
+  "license": "MIT",
+  "license_sha256": "228669014761061b3741c8a63032a7e3d11cf4d45ba007fd93d3b5291b6e675a",
+  "kit_reference_revision": "80a82b26413142c6d60a71203d51836a2e708cf2",
+  "installed_with_scripts_disabled": true,
+  "actual_version_output": "0.1.26",
+  "live_qloo_calls_during_implementation": 0
+}

@@ -1,0 +1,17 @@
+# Deployment blueprint only. No service has been created by this source task.
+services:
+  - type: web
+    name: lost-dutchmans-compass
+    runtime: docker
+    plan: free
+    repo: https://github.com/scking21/Lost-Dutchmans-Compass
+    autoDeployTrigger: off
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/status
+    envVars:
+      - key: QLOO_API_KEY
+        sync: false
+      - key: APP_ORIGIN
+        sync: false
+      - key: MAX_LIVE_RUNS
+        value: "3"

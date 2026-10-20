@@ -1,0 +1,1 @@
+{"name":"lost-dutchmans-compass-official","version":"0.1.0","private":true,"type":"module","license":"MIT","engines":{"node":">=22.19.0"},"scripts":{"start":"node server/index.mjs","test":"node --test tests/*.test.mjs","harness:version":"node node_modules/@qloo/qloo-harness/dist/bin.js --version"},"dependencies":{"@qloo/qloo-harness":"0.1.26"}}
