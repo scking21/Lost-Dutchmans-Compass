@@ -55,3 +55,12 @@ test('mismatch preview redacts before truncating and excludes non-place and ambi
   assert.equal(out.body.code,'curated_unresolved');if(kind==='redact'){assert.match(out.body.unverifiedPlaceCandidate.name,/\[redacted\]/);assert.ok(!out.body.unverifiedPlaceCandidate.name.includes('KKKK'));}else assert.equal(out.body.unverifiedPlaceCandidate,undefined);
  }
 });
+test('independently documented exact Goldfield alias requires the same address, place type and explicit confirmation',async()=>{
+ const entry=catalogue.find(e=>e.id==='real-03'),original=rows.find(r=>r.catalogueId===entry.id),alias='Goldfield Ghost Town and Mine Tours Inc.';
+ for(const variation of ['exact','different-address','different-name','different-type']){
+  const r={...original,name:variation==='different-name'?alias+' Unrelated':alias,type:variation==='different-type'?'urn:entity:movie':original.type,properties:{address:variation==='different-address'?'Different fixture street':entry.address}},calls=[];
+  const service=createCuratedService({run:async(op,input)=>{calls.push(input);return {dispatches:input.entity===r.entity_id?1:2,data:describe(r)};}}),b={...base,action:'curated-place',catalogueId:entry.id},out=await service.execute(b,{key:'OFFLINE',owner:'o',context:service.preflight(b,'o')});
+  if(variation!=='exact'){assert.equal(out.body.code,'curated_unresolved');assert.equal(out.body.choiceToken,undefined);continue;}
+  assert.equal(out.body.code,'curated_choice');assert.equal(out.body.identityToken,undefined);assert.equal(calls.length,1);const confirm={...base,action:'curated-confirm',choiceToken:out.body.choiceToken,choiceIndex:0},done=await service.execute(confirm,{key:'OFFLINE',owner:'o',context:service.preflight(confirm,'o')});assert.equal(done.body.code,'curated_confirmed');assert.equal(done.body.identity.catalogueId,entry.id);assert.equal(done.body.identity.name,alias);assert.equal(calls.length,2);
+ }
+});

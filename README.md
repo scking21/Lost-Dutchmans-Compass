@@ -95,3 +95,7 @@ Project source is MIT. The pinned Qloo package is MIT; its license and notices a
 - The [event overview](https://qloo.devpost.com/) requires an externally published end-to-end demo and says a video is optional. The existing walkthrough is supplementary historical evidence.
 - The no-model official CLI route is implemented. A conversational/autonomous in-app agent is not implemented. Historical reported external browser-agent use is not a reproduced goal-driven agent run of the verified revision; agentic eligibility remains unestablished.
 - Remaining evidence gaps include the unresolved agentic-route evidence, historical response-data retention and unproven audience benefit. This is not a claim of submission readiness.
+
+### Exact alias correction
+
+A final separate two-dispatch incident lookup on `5f90ee383cbd291c54453a9a8e5038da5bb2c419` made the rejected public place name/address visible without accepting it. Independent Visit Mesa and Apache Junction tourism sources then confirmed the longer corporate name for the same venue; the catalogue now records that one precise alias with source links. Full address, place type, identity binding and explicit confirmation remain required. This correction has offline regression coverage; a new functional rehearsal is pending. The original broader comparison remains blocked and unscored. The comparison plus both incident lookups consumed six observed dispatches, with no ranking.

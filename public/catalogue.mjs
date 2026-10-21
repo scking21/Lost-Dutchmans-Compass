@@ -50,7 +50,7 @@ export const catalogue=[
   {
     "id": "real-03",
     "name": "Goldfield Ghost Town",
-    "aliases": [],
+    "aliases": ["Goldfield Ghost Town and Mine Tours Inc."],
     "address": "4650 N Mammoth Mine Road, Apache Junction, AZ 85119",
     "categories": [
       "mining_heritage_attraction",
@@ -60,6 +60,16 @@ export const catalogue=[
     "visitWarning": "UNKNOWN_RECHECK_CLOSER_TO_VISIT",
     "blocked": false,
     "sources": [
+      {
+        "url": "https://explore.visitmesa.com/place/BYV68jVAL/goldfield-ghost-town-and-mine-tours-inc-apache-junction-arizona-us",
+        "title": "Visit Mesa — Goldfield Ghost Town and Mine Tours Inc.; exact alias, same address and official venue link",
+        "retrievedAt": "2026-10-21T17:58:26Z"
+      },
+      {
+        "url": "https://visitaj.com/listing/goldfield-ghost-town-and-mine-tours-inc/",
+        "title": "Apache Junction tourism — exact corporate name and official venue link",
+        "retrievedAt": "2026-10-21T17:58:26Z"
+      },
       {
         "url": "https://goldfieldghosttown.com/",
         "title": "Goldfield Ghost Town — official homepage",

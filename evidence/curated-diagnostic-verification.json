@@ -61,7 +61,7 @@
   },
   "retainedEvidence": "Original receipt and scored blocked ledger retained privately. Render log window contained no entries; subprocess output was not persisted.",
   "readOnlyMismatchPreview": {
-    "status": "offline candidate",
+    "status": "deployed and browser verified on5f90ee383cbd291c54453a9a8e5038da5bb2c419",
     "scope": "For a single successfully returned public place that fails matching, display bounded name/address as unverified text only. No provider ID, token, alias acceptance, extra call or persistent payload log.",
     "syntheticRegressions": [
       "No identity/choice authority",
@@ -70,5 +70,24 @@
       "No non-place or ambiguity preview"
     ],
     "finalIncidentPlan": "After exact review/deployment, one separate Goldfield lookup, maximum two dispatches, then stop regardless of outcome. No rank or change to frozen comparison."
+  },
+  "finalIncident": {
+    "revision": "5f90ee383cbd291c54453a9a8e5038da5bb2c419",
+    "observedDispatches": 2,
+    "reservedDispatches": 2,
+    "countComplete": true,
+    "iterationTotalObservedDispatches": 6,
+    "confirmationAttempted": false,
+    "rankAttempted": false,
+    "result": "curated_unresolved",
+    "diagnostic": "name_mismatch",
+    "interpretation": "Read-only public-place preview exposed a longer name. Independently retrieved tourism sources support that exact name at the catalogue venue. Frozen comparison remains blocked; no retrospective rerun or quality score."
+  },
+  "documentedAliasCorrection": {
+    "alias": "Goldfield Ghost Town and Mine Tours Inc.",
+    "source": "Independently retrieved Visit Mesa and Apache Junction tourism listings, linked in catalogue; official venue homepage confirms public street address.",
+    "matchingChange": "One exact recorded alias for real-03. Full normalized address, place type, UUID binding and explicit user confirmation remain mandatory. No fuzzy matching.",
+    "test": "Synthetic UUID regression fails before alias addition; accepts alias with matching address/type, rejects wrong address/name/type.",
+    "liveStatus": "Correction candidate not yet functionally rehearsed."
   }
 }
