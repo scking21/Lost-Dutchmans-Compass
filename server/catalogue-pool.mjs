@@ -57,7 +57,7 @@ export async function resolveCatalogue(b,{key,signal,run=runHarness}={}){
    cards.push(card);
   }
   return response('catalogue_resolved','Two local visitor identities matched the independently sourced catalogue. Rank this fixed shortlist with your favorite; access remains unknown.',200,{resolvedPlaceCount:cards.length,resolvedPlaces:cards.map(c=>catalogue.find(e=>e.id===c.catalogueId).name),privateCatalogueContext:{cards,region:'Mesa area',source:'session-bound official place resolution'}});
- }catch(e){audit.dispatchCountComplete=false;return response(e.code==='process_termination_unknown'?'process_termination_unknown':'catalogue_failed','Place resolution could not finish safely. No automatic retry or ranking was run.',502);}
+ }catch(e){audit.dispatchCountComplete=false;return response(['process_termination_unknown','provider_auth','provider_rate_limited'].includes(e.code)?e.code:'catalogue_failed','Place resolution could not finish safely. No automatic retry or ranking was run.',502,e.code==='provider_rate_limited'?{retryAfterMs:e.retryAfterMs||60000}:{});}
 }
 export async function confirmCatalogue(b,{key,signal,choiceContext,run=runHarness}={}){
  const audit=auditRecord();const response=(code,message,status=422,extra={})=>({status,body:{requestId:randomUUID(),code,message,cards:[],audit,...extra}});
@@ -76,7 +76,7 @@ export async function confirmCatalogue(b,{key,signal,choiceContext,run=runHarnes
   if(!selectedCard||!hydrated||choiceContext.cards.some(c=>c.entityId.toLowerCase()===expected))return response('catalogue_confirmation_failed','The selected identity failed exact name, full-address or place-type checks. No ranking was run.');
   const cards=[...choiceContext.cards,hydrated];
   return response('catalogue_resolved','Both local identities now match the independently sourced catalogue. Ranking requires its own click; access remains unknown.',200,{resolvedPlaceCount:2,resolvedPlaces:cards.map(c=>catalogue.find(e=>e.id===c.catalogueId).name),privateCatalogueContext:{cards,region:'Mesa area',source:'session-bound official place resolution and explicit identity confirmation'}});
- }catch(e){audit.dispatchCountComplete=false;return response(e.code==='process_termination_unknown'?'process_termination_unknown':'catalogue_confirmation_failed','Identity confirmation could not finish safely. No automatic retry or ranking was run.',502);}
+ }catch(e){audit.dispatchCountComplete=false;return response(['process_termination_unknown','provider_auth','provider_rate_limited'].includes(e.code)?e.code:'catalogue_confirmation_failed','Identity confirmation could not finish safely. No automatic retry or ranking was run.',502,e.code==='provider_rate_limited'?{retryAfterMs:e.retryAfterMs||60000}:{});}
 }
 export function createCatalogueSessions(now=()=>Date.now()){
  const sets=new Map(),choices=new Map(),generations=new Map();

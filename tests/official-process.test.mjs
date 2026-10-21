@@ -32,3 +32,10 @@ test('actual official ambiguity exposes exact candidate evidence; explicit UUID 
  const confirmed=await confirmCatalogue({destination:'Mesa'},{key:'OFFLINE',run,choiceContext:out.body.privateCatalogueChoice});assert.equal(confirmed.body.code,'catalogue_resolved',JSON.stringify(confirmed));assert.equal(confirmed.body.audit.networkDispatches,1);assert.equal(confirmed.body.privateCatalogueContext.cards.length,2);
  const absent=await run('describe',{entity:'Synthetic missing place',type:'place'});assert.equal(absent.dispatches,1);assert.equal(resolutionDiagnostic(absent.data,{name:'Synthetic missing place'}).reason,'no_match');
 });
+
+test('actual pinned CLI provider 429 interrupts its backoff and preserves Retry-After',async()=>{
+ const fixture=fileURLToPath(new URL('./fixture-provider-rate-limit-fetch.mjs',import.meta.url));
+ const start=Date.now();
+ await assert.rejects(()=>runHarness('describe',{entity:'Arrival',type:'movie'},{key:'OFFLINE',execute:(command,args,opts)=>executeProcess(command,['--import',fixture,...args],opts)}),e=>e.code==='provider_rate_limited'&&e.retryAfterMs===3600000);
+ assert.ok(Date.now()-start<10000,'Provider pause must interrupt the pinned CLI backoff before the 22-second process timeout');
+});

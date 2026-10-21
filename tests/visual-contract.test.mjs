@@ -12,7 +12,7 @@ test('essential controls, consent and access warning precede primary action; opt
  assert.ok(html.indexOf('Visitor access is unknown.')<run);
  assert.ok(run<options);assert.ok(options<html.indexOf('id="rerank"'));
  const disclosure=html.slice(options,html.indexOf('</details>',options));
- assert.match(disclosure,/<summary>Scope, test modes and pilot details<\/summary>/);
+ assert.match(disclosure,/<summary>Scope, test modes and request limits<\/summary>/);
  for(const id of ['heritage','mode','verified'])assert.match(disclosure,new RegExp(`id="${id}"`));
  assert.match(html,/<input id="heritage" type="checkbox">/);
  assert.match(html,/<input id="verified" type="checkbox" disabled>/);

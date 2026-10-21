@@ -41,9 +41,17 @@ Changing taste may rerank a retained result set, using a session-bound candidate
 
 ## Budget and safety
 
-The unchanged process ceiling is 12 reserved provider dispatch credits, with at most three live submissions by default. Discovery or local resolution reserves four; rank reserves seven. Failures and cancellations are not refunded. Resolution plus one rank reserves eleven; one explicit identity confirmation adds one, fitting the same twelve-credit and three-submission ceilings. A failed or cancelled confirmation consumes its token and reservation; it is never automatically retried. A deployment/restart may technically reset process counters, but does not authorize new account spending or replenish any separate verification allowance.
+### Judging access candidate (not yet deployed or live-verified)
 
-There are no startup calls, automatic retries, bulk catalogue queries or arbitrary API proxy. Place resolution uses exactly two fixed allowlisted names; client-supplied identity lists cannot expand it. Ambiguity never guesses: only the bounded exact-match case can offer a separate confirmation click. Each action needs its own click. This capped pilot does not meet a promise of unrestricted judging access; judging access needs a separate explicit plan.
+Production defaults to `ACCESS_MODE=judging`. The old shared 12-credit/three-submission testing ceiling no longer disables later judges. Existing `MAX_LIVE_RUNS` configuration does not activate pilot mode. Every explicit discovery/local resolution remains bounded by four provider dispatches, confirmation by one, and rank by seven. No automatic provider retries are introduced.
+
+Four submissions per minute are allowed per browser-session/socket pair, with a separate 60-per-minute socket safety limit and two concurrent operations. Distinct judges behind the same hosting proxy do not share the old four-submission bucket. Forwarded IP headers are never trusted. Sessions and identities remain private, in memory and expire after 15 minutes; no cross-session provider cache is added.
+
+Provider 401/403 pauses further execution for the process; 429 pauses for at least one minute and respects a valid longer Retry-After. A later request requires an explicit user action. Uncertain subprocess termination remains fail-closed. Status reports actual pause state, process start time and operation-scoped limits. Provider account allowance remains unknown; none of these controls claims unlimited provider capacity.
+
+For an explicit bounded test, select `ACCESS_MODE=pilot`; its defaults remain 12 process reservations and three submissions, configurable with `MAX_DISPATCH_CREDITS` and `MAX_LIVE_RUNS`. Optional `LIVE_ACCESS_UNTIL` uses exact UTC format `YYYY-MM-DDTHH:mm:ss.sssZ`. There is no default expiry. Process counters reset on host restart and are not a durable account ledger. Failed/cancelled pilot reservations are never refunded.
+
+There are no startup calls, automatic retries, bulk catalogue queries or arbitrary API proxy. Place resolution uses exactly two fixed allowlisted names; client-supplied identity lists cannot expand it. Ambiguity never guesses: only the bounded exact-match case can offer a separate confirmation click. Each action needs its own click. The judging candidate removes the shared testing ceiling; deployment and multi-session live verification are still required before claiming restored access.
 
 The API enforces same-origin POSTs, JSON input validation, a 4 KiB request bound, restrictive browser CSP, session-bound candidate handles, concurrency limits and per-socket-address throttling. Origin checks protect against CSRF; they are not authentication. A shared reverse proxy can conservatively share a rate bucket.
 
@@ -65,7 +73,7 @@ Mock/DOM fixtures establish contracts, not live package compatibility, real-brow
 
 Use the event’s complete current requirements, not whichever page is least demanding. The kit’s CLI route is supported; broader agentic and Qloo-on/off evidence requirements still need explicit evidence. Historical reported agent use must not be confused with an in-app agent or a newly reproduced run. Do not claim comparative quality, an autonomous product, current access, unrestricted judge readiness or event eligibility from a successful API call.
 
-The next decision is a verified allowance-backed judging-access plan; the completed pilot has exhausted the deployed process capacity. Further provider calls, capacity changes or deployments require separate authorization. Screenshots and the synthetic fixture lab do not replace a functional public demo. A subsequent audience study must use identical candidate facts and access caveats for both arms, preserve raw outcomes, and distinguish synthetic technical probes from real first-time visitors.
+The next step is independent review, deployment and bounded multi-session verification of the judging-access candidate. The historical exhausted state above is not a current provider balance. Screenshots and the synthetic fixture lab do not replace a functional public demo. A subsequent audience study must use identical candidate facts and access caveats for both arms, preserve raw outcomes, and distinguish synthetic technical probes from real first-time visitors.
 
 Project source is MIT. The pinned Qloo package is MIT; its license and notices are retained in `THIRD_PARTY_NOTICES.md` and `evidence/`. Do not remove third-party notices from runtime distributions.
 

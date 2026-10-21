@@ -1,1 +1,1 @@
-export function canStartLive({configured,credits,runs},required){return configured===true&&Number.isInteger(credits)&&credits>=required&&Number.isInteger(runs)&&runs>0;}
+export function canStartLive({configured,credits,runs,executionAllowed,accessMode},required){return executionAllowed!==false&&configured===true&&(accessMode==='judging'||Number.isInteger(credits)&&credits>=required&&Number.isInteger(runs)&&runs>0);}

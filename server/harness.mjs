@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 const root=dirname(dirname(fileURLToPath(import.meta.url)));
 export const HARNESS_VERSION='0.1.26';
 export class HarnessError extends Error{constructor(code){super(code);this.code=code;}}
+function providerStopError(stderr){const stop=stderr.match(/^COMPASS_PROVIDER_STOP:(401|403|429)(?::(\d+))?\r?\n/m);if(!stop)return null;const error=new HarnessError(stop[1]==='429'?'provider_rate_limited':'provider_auth');const delay=Number(stop[2]);error.retryAfterMs=Number.isSafeInteger(delay)&&delay>=60000&&delay<=8e15?delay:60000;return error;}
 export function executeProcess(command,args,{env,cwd,input,signal,spawnImpl=spawn,timeoutMs=22000,maxBytes=1_000_000,terminationWaitMs=2000}={}){
  return new Promise((resolve,reject)=>{
   if(signal?.aborted){reject(new HarnessError('cancelled'));return;}
@@ -16,7 +17,7 @@ export function executeProcess(command,args,{env,cwd,input,signal,spawnImpl=spaw
   try{child=spawnImpl(command,args,{env,cwd,shell:false,stdio:['pipe','pipe','pipe']});}catch{finish(new HarnessError('process_start'));return;}
   timer=setTimeout(()=>terminate(new HarnessError('process_timeout')),timeoutMs);
   signal?.addEventListener('abort',onAbort,{once:true});
-  for(const [stream,target] of [[child.stdout,out],[child.stderr,err]])stream.on('data',chunk=>{if(terminationError||settled)return;size+=Buffer.byteLength(chunk);if(size>maxBytes){terminate(new HarnessError('process_output_limit'));return;}target.push(Buffer.from(chunk));});
+  for(const [stream,target] of [[child.stdout,out],[child.stderr,err]])stream.on('data',chunk=>{if(terminationError||settled)return;size+=Buffer.byteLength(chunk);if(size>maxBytes){terminate(new HarnessError('process_output_limit'));return;}target.push(Buffer.from(chunk));if(target===err){const providerStop=providerStopError(Buffer.concat(err).toString());if(providerStop)terminate(providerStop);}});
   child.on('error',()=>{if(terminationError)return;if(child.pid)terminate(new HarnessError('process_start'));else finish(new HarnessError('process_start'));});
   child.on('close',code=>finish(terminationError,{code,stdout:Buffer.concat(out).toString(),stderr:Buffer.concat(err).toString()}));
   child.stdin.on('error',()=>{});if(signal?.aborted)onAbort();else child.stdin.end(input);
@@ -32,6 +33,7 @@ export async function runHarness(operation,input,{key,signal,execute=executeProc
  try{
   const env={PATH:process.env.PATH||'/usr/bin:/bin',HOME:join(temp,'home'),QLOO_HOME:join(temp,'state'),QLOO_API_KEY:key,QLOO_BASE_URL:'https://hackathon.api.qloo.com',QLOO_TRUSTED_BASE_URL:'https://hackathon.api.qloo.com',COMPASS_EGRESS_GUARD:'1',COMPASS_WORKFLOW_BUDGET:dispatchBudget===1?'1':operation==='rank'?'5':'2',NO_COLOR:'1'};
   const result=await execute(process.execPath,['--import',join(root,'server/egress-guard.mjs'),join(root,'node_modules/@qloo/qloo-harness/dist/bin.js'),'exec',operation],{env,cwd:join(temp,'work'),input:JSON.stringify(input),signal});
+  const stop=providerStopError(result.stderr+'\n');if(stop)throw stop;
   let data;try{data=JSON.parse(result.stdout);}catch{throw new HarnessError('invalid_harness_output');}
   const matches=[...result.stderr.matchAll(/^COMPASS_EGRESS:([1-5])$/gm)];
   return {data,exitCode:result.code,dispatches:matches.length?Number(matches.at(-1)[1]):0};

@@ -8,7 +8,7 @@ import {createRefinement} from '../public/refine.mjs';
 import {catalogue} from '../public/catalogue.mjs';
 
 // Minimal DOM fixture runs the actual application handlers without a browser or network.
-async function mount(response) {
+async function mount(response,statusOverrides={}) {
  const elements=new Map();let activeElement=null;const calls=[];
  class Element {
   constructor(tag){this.tagName=tag;this.children=[];this.listeners={};this.attributes={};this.value='';this.checked=false;this.hidden=false;this._text='';}
@@ -24,7 +24,7 @@ async function mount(response) {
  elements.get('destination').value='Mesa';elements.get('favorite').value='Arrival';elements.get('type').value='movie';elements.get('mode').value='qloo';elements.get('choices').hidden=true;
  const panel=new Element('section');
  const document={getElementById:id=>elements.get(id),createElement:tag=>new Element(tag),querySelector:()=>panel,get activeElement(){return activeElement;}};
- const fetch=async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>url==='/api/status'?{configured:true,dispatchCreditsRemaining:12,liveRunsRemaining:3}:structuredClone(typeof response==='function'?response(options):response)};};
+ const fetch=async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>url==='/api/status'?{configured:true,dispatchCreditsRemaining:12,liveRunsRemaining:3,...statusOverrides}:structuredClone(typeof response==='function'?response(options):response)};};
  const source=(await readFile(new URL('../public/app.mjs',import.meta.url),'utf8')).replace(/^import .*;\n/gm,'');
  vm.runInNewContext(source,{document,fetch,canStartLive,applyDomainScope,createRefinement,AbortController,setTimeout,clearTimeout,console});
  await new Promise(resolve=>setImmediate(resolve));
@@ -90,3 +90,26 @@ test('production broad discovery defaults to explicit unscoped results, not an a
 test('a new failed resolution clears an earlier local rank handle and displays safe partial progress',async()=>{let step=0;const ui=await mount(()=>++step===1?{code:'catalogue_resolved',resolvedPlaceCount:2,catalogueSetId:'previous',cards:[]}:{code:'catalogue_unresolved',message:'1 of 2 local identities matched. Usery Mountain Regional Park was unresolved or ambiguous. Stopped without retry or ranking.',resolutionProgress:{matchedCount:1,total:2},cards:[]});await ui.submit('resolve-local');assert.equal(ui.elements.get('rank-local').disabled,false);await ui.submit('resolve-local');assert.equal(ui.elements.get('rank-local').disabled,true);assert.match(ui.elements.get('status').textContent,/1 of 2 local identities matched/);assert.equal(ui.all().filter(e=>e.className==='card').length,0);});
 test('explicit identity choice requires its own click and cannot auto-rank or transmit a raw candidate ID',async()=>{let step=0;const ui=await mount(()=>++step===1?{code:'catalogue_choice',message:'Confirm exact identity',catalogueChoice:{token:'opaque-choice',name:'Catalogue park',address:'Public catalogue address',note:'One additional call'},cards:[]}:{code:'catalogue_resolved',resolvedPlaceCount:2,catalogueSetId:'complete-pool',cards:[]});await ui.submit('resolve-local');assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,1);assert.equal(ui.elements.get('confirm-local').hidden,false);assert.equal(ui.elements.get('rank-local').disabled,true);assert.match(ui.elements.get('local-choice').textContent,/Public catalogue address/);await ui.submit('confirm-local');const bodies=ui.calls.filter(c=>c.url==='/api/recommend').map(c=>JSON.parse(c.options.body));assert.equal(bodies.length,2);assert.equal(bodies[1].action,'confirm-catalogue');assert.equal(bodies[1].catalogueChoiceToken,'opaque-choice');assert.equal(bodies[1].candidateId,undefined);assert.equal(ui.elements.get('confirm-local').hidden,true);assert.equal(ui.elements.get('rank-local').disabled,false);});
 test('changing destination invalidates an offered choice and disables confirmation',async()=>{const ui=await mount({code:'catalogue_choice',catalogueChoice:{token:'opaque',name:'Park',address:'Address',note:'Confirm'},cards:[]});await ui.submit('resolve-local');ui.change('destination','Paris');assert.equal(ui.elements.get('confirm-local').hidden,true);assert.equal(ui.elements.get('confirm-local').disabled,true);});
+
+
+test('expired and uncertain server access disable live actions despite available reservations',async()=>{
+ for(const reason of ['access_expired','termination_uncertain']){
+  const ui=await mount(result,{liveExecutionAllowed:false,livePauseReason:reason,maxDispatchCredits:24});
+  assert.equal(ui.elements.get('run').disabled,true);assert.equal(ui.elements.get('resolve-local').disabled,true);
+  assert.match(ui.elements.get('readiness').textContent,reason==='access_expired'?/window has ended/:/could not confirm/);
+  await ui.submit();assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,0);
+  ui.change('mode','test-failure');assert.equal(ui.elements.get('run').disabled,false);
+ }
+});
+test('capacity copy uses configured ceiling and never presents it as account allowance',async()=>{
+ const ui=await mount(result,{maxDispatchCredits:24});
+ assert.match(ui.elements.get('readiness').textContent,/12\/24 dispatch credits/);
+ assert.match(ui.elements.get('readiness').textContent,/not the Qloo account allowance/);
+});
+
+test('judging UI supports explicit operations without displaying a shared pilot allowance',async()=>{
+ const ui=await mount(result,{accessMode:'judging',maxDispatchCredits:null,dispatchCreditsRemaining:null,liveRunsRemaining:null,liveExecutionAllowed:true});
+ assert.equal(ui.elements.get('run').disabled,false);assert.equal(ui.elements.get('resolve-local').disabled,false);
+ assert.match(ui.elements.get('readiness').textContent,/Live judging access/);assert.doesNotMatch(ui.elements.get('readiness').textContent,/12|unlimited/);
+ await ui.submit();assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,1);
+});

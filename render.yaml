@@ -13,5 +13,5 @@ services:
         sync: false
       - key: APP_ORIGIN
         sync: false
-      - key: MAX_LIVE_RUNS
-        value: "3"
+      - key: ACCESS_MODE
+        value: "judging"
