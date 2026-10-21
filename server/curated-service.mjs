@@ -77,7 +77,12 @@ export function createCuratedService({now=()=>Date.now(),run=runHarness}={}){
      if(candidates.length<=5)options=candidates.flatMap(c=>{if(entry){const v=validateCataloguePlace({entity_id:c.id,name:c.name,type:c.type,subtype:c.subtype,properties:{address:c.address}},{},entry);return v?[{...v,type,visitWarning:entry.visitWarning}]:[];}return uuid(c.id)&&typeof c.name==='string'&&typeOk({entity_id:c.id,type:c.type,subtype:c.subtype},{},type)?[{entityId:c.id,name:c.name,type,detail:String(c.disambiguation||c.description||'').slice(0,200)}]:[];});
      if(entry&&options.length!==1)options=[];
     }
-    if(!options.length||new Set(options.map(o=>o.entityId.toLowerCase())).size!==options.length)return reply('curated_unresolved','No usable identity matched. Edit the favorite or choose another catalogue place; no substitute or automatic retry was used.',{workflowState:'needs_input',resolutionDiagnostic:resolutionDiagnostic(d,name,type,entry)},422);
+    if(!options.length||new Set(options.map(o=>o.entityId.toLowerCase())).size!==options.length){
+     const r=d.results?.length===1?d.results[0]:null;
+     const publicText=(value,limit)=>typeof value==='string'?clean(value).replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,limit):'Not returned';
+     const preview=entry&&['ok','partial','degraded'].includes(d.status)&&r&&uuid(r.entity_id)&&typeOk(r,d.interpretation,'place')&&typeof r.name==='string'?{unverifiedPlaceCandidate:{name:publicText(r.name,240),address:publicText(r.properties?.address,320)}}:{};
+     return reply('curated_unresolved','No usable identity matched. Edit the favorite or choose another catalogue place; no substitute or automatic retry was used.',{workflowState:'needs_input',resolutionDiagnostic:resolutionDiagnostic(d,name,type,entry),...preview},422);
+    }
     const choiceToken=save({kind:'choice',options,entryId:entry?.id},owner);
     return reply('curated_choice','Review the identity and explicitly confirm it. No rank has run.',{choiceToken,choices:options.map(publicIdentity),workflowState:'needs_input',resolutionDiagnostic:{...resolutionDiagnostic(d,name,type,entry),reason:'matched'}});
    }

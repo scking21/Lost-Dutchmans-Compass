@@ -42,3 +42,16 @@ test('omitted hydrated address stays rejected even with matching selected metada
   assert.equal(out.body.code,'curated_unresolved');assert.equal(out.body.resolutionDiagnostic.boundSelectedCatalogueMatch,bound);assert.ok(out.body.resolutionDiagnostic.rejectionReasons.includes('address_missing'));
  }
 });
+test('rejected public place preview is bounded and never supplies ID, choice or confirmation authority',async()=>{
+ const row=rows.find(r=>r.catalogueId==='real-03'),bad={...row,name:'<script>Fixture alternate</script>'+('x'.repeat(400)),properties:{...row.properties,description:'DO NOT COPY'}};
+ const service=createCuratedService({run:async()=>({dispatches:2,data:describe(bad)})}),b={...base,action:'curated-place',catalogueId:'real-03'},out=await service.execute(b,{key:'OFFLINE',owner:'o',context:service.preflight(b,'o')});
+ assert.equal(out.body.code,'curated_unresolved');assert.equal(out.body.choiceToken,undefined);assert.equal(out.body.identityToken,undefined);assert.equal(out.body.unverifiedPlaceCandidate.name.length,240);assert.ok(out.body.unverifiedPlaceCandidate.address.length<=320);assert.deepEqual(Object.keys(out.body.unverifiedPlaceCandidate).sort(),['address','name']);assert.ok(!JSON.stringify(out.body.unverifiedPlaceCandidate).includes(row.entity_id));assert.ok(!JSON.stringify(out.body.unverifiedPlaceCandidate).includes('DO NOT COPY'));assert.throws(()=>service.preflight({...base,action:'curated-confirm',choiceToken:undefined,choiceIndex:0},'o'));
+});
+test('mismatch preview redacts before truncating and excludes non-place and ambiguous results',async()=>{
+ const row=rows.find(r=>r.catalogueId==='real-03'),key='OFFLINE_TEST_'+('K'.repeat(300));
+ for(const kind of ['redact','wrong-type','ambiguous']){
+  const d=describe({...row,name:key+' alternate fixture',type:kind==='wrong-type'?'urn:entity:movie':row.type});if(kind==='ambiguous')d.status='needs_input';
+  const service=createCuratedService({run:async()=>({dispatches:2,data:d})}),b={...base,action:'curated-place',catalogueId:'real-03'},out=await service.execute(b,{key,owner:'o',context:service.preflight(b,'o')});
+  assert.equal(out.body.code,'curated_unresolved');if(kind==='redact'){assert.match(out.body.unverifiedPlaceCandidate.name,/\[redacted\]/);assert.ok(!out.body.unverifiedPlaceCandidate.name.includes('KKKK'));}else assert.equal(out.body.unverifiedPlaceCandidate,undefined);
+ }
+});

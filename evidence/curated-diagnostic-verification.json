@@ -27,12 +27,48 @@
       "bound selected metadata catalogue match"
     ],
     "providerPayloadPublished": false,
-    "regressions": "Three new offline tests failed before implementation and passed after. No fallback or fuzzy identity matching added."
+    "regressions": "Three new offline tests failed before implementation and passed after. No fallback or fuzzy identity matching added.",
+    "offlineTests": {
+      "passed": 130,
+      "failed": 0,
+      "independentReview": "PASS, exact tree13f6aa935851727c659fd735694c99f3805c6b47"
+    }
   },
   "incidentProbe": {
-    "status": "pending independent review and deployment",
+    "status": "complete",
+    "revision": "7ab5fdee63f5047ce9cd19d784dc9a92f02a5f78",
+    "deployId": "dep-dbcflkuktt5c73facfrg",
+    "liveAt": "2026-10-21T17:48:44.617813Z",
     "maximumDispatches": 2,
-    "scope": "One separate diagnostic place resolution. No confirmation, rank, substitution or retry; frozen comparison remains terminal."
+    "observedDispatches": 2,
+    "appReservedDispatches": 2,
+    "countComplete": true,
+    "confirmationAttempted": false,
+    "rankAttempted": false,
+    "retryAttempted": false,
+    "result": "curated_unresolved",
+    "diagnostic": {
+      "workflowStatus": "ok",
+      "resultCount": 1,
+      "reason": "identity_mismatch",
+      "rejectionReasons": [
+        "name_mismatch"
+      ],
+      "boundSelectedCatalogueMatch": false
+    },
+    "interpretation": "This separate attempt returned one describe result and failed exact catalogue name matching. No address, type or identity rejection was flagged. The alternative name was not retained, so legitimate alias versus wrong identity remains unresolved. This does not retroactively establish the original frozen attempt cause.",
+    "offlineInspection": "Pinned compactEntity copies entity.name unchanged. Catalogue has no Goldfield aliases; Compass normalizes Unicode, case, specified punctuation and whitespace. No demonstrated deterministic normalization bug; no identity rule changed."
   },
-  "retainedEvidence": "Original receipt and scored blocked ledger retained privately. Render log window contained no entries; subprocess output was not persisted."
+  "retainedEvidence": "Original receipt and scored blocked ledger retained privately. Render log window contained no entries; subprocess output was not persisted.",
+  "readOnlyMismatchPreview": {
+    "status": "offline candidate",
+    "scope": "For a single successfully returned public place that fails matching, display bounded name/address as unverified text only. No provider ID, token, alias acceptance, extra call or persistent payload log.",
+    "syntheticRegressions": [
+      "No identity/choice authority",
+      "Text rendering of HTML-like names",
+      "Redaction before truncation",
+      "No non-place or ambiguity preview"
+    ],
+    "finalIncidentPlan": "After exact review/deployment, one separate Goldfield lookup, maximum two dispatches, then stop regardless of outcome. No rank or change to frozen comparison."
+  }
 }
