@@ -52,3 +52,8 @@ test('streaming provider marker waits for newline at every status and delay spli
   await assert.rejects(()=>pending,e=>e.code==='provider_rate_limited'&&e.retryAfterMs===3600000);assert.equal(killed,true);
  }
 });
+
+test('browser deadline covers two bounded subprocesses and termination cleanup',async()=>{
+ const {PROCESS_TIMEOUT_MS}=await import('../server/harness.mjs');const {readFile}=await import('node:fs/promises');const source=await readFile(new URL('../public/app.mjs',import.meta.url),'utf8');
+ assert.equal(PROCESS_TIMEOUT_MS,35000);const timeout=Number(source.match(/activeController\.abort\(\),(\d+)/)[1]);assert.ok(timeout>2*(PROCESS_TIMEOUT_MS+2000)+10000);
+});

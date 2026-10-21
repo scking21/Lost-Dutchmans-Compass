@@ -45,7 +45,7 @@ Changing taste may rerank a retained result set, using a session-bound candidate
 
 Production defaults to `ACCESS_MODE=judging`. The old shared 12-credit/three-submission testing ceiling no longer disables later judges. Existing `MAX_LIVE_RUNS` configuration does not activate pilot mode. Every explicit discovery/local resolution remains bounded by four provider dispatches, confirmation by one, and rank by seven. No automatic provider retries are introduced.
 
-Four submissions per minute are allowed per browser-session/socket pair, with a separate 60-per-minute socket safety limit and two concurrent operations. Distinct judges behind the same hosting proxy do not share the old four-submission bucket. Forwarded IP headers are never trusted. Sessions and identities remain private, in memory and expire after 15 minutes; no cross-session provider cache is added.
+Four submissions per minute are allowed per browser-session/socket pair, with a separate 60-per-minute socket safety limit and one active live submission on the free instance. A competing request gets an explicit retryable busy response before any reservation or provider dispatch. Distinct judges behind the same hosting proxy do not share the old four-submission bucket. Forwarded IP headers are never trusted. Sessions and identities remain private, in memory and expire after 15 minutes; no cross-session provider cache is added.
 
 Provider 401/403 pauses further execution for the process; 429 pauses for at least one minute and respects a valid longer Retry-After. A later request requires an explicit user action. Uncertain subprocess termination remains fail-closed. Status reports actual pause state, process start time and operation-scoped limits. Provider account allowance remains unknown; none of these controls claims unlimited provider capacity.
 
@@ -55,7 +55,7 @@ There are no startup calls, automatic retries, bulk catalogue queries or arbitra
 
 The API enforces same-origin POSTs, JSON input validation, a 4 KiB request bound, restrictive browser CSP, session-bound candidate handles, concurrency limits and per-socket-address throttling. Origin checks protect against CSRF; they are not authentication. A shared reverse proxy can conservatively share a rate bucket.
 
-The CLI runs with fixed arguments, JSON stdin, private temporary HOME/QLOO_HOME and a restricted environment. Its egress guard restricts hosts, paths, methods and retry behavior. Output/time bounds terminate failed subprocesses; uncertain termination disables further live execution in that process. Provider affinity is a raw finite aggregate number, not a probability about an individual. Query summaries are not per-place causal explanations.
+The CLI runs with fixed arguments, JSON stdin, private temporary HOME/QLOO_HOME and a restricted environment. Its egress guard restricts hosts, paths, methods and retry behavior. Each of at most two sequential subprocesses has a 35-second deadline and a two-second termination wait; the browser deadline is 90 seconds. Output/time bounds terminate failed subprocesses; uncertain termination disables further live execution in that process. Provider affinity is a raw finite aggregate number, not a probability about an individual. Query summaries are not per-place causal explanations.
 
 ## Run and test
 

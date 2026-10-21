@@ -40,7 +40,7 @@ test('expiry prevents dispatch and retains already charged reservations',async()
 });
 test('concurrent requests reserve before dispatch and failures are not refunded',async()=>{
  const completions=[];let calls=0;
- const app=createApp({env,workflow:()=>{calls++;return new Promise(resolve=>completions.push(resolve));}});
+ const app=createApp({concurrencyLimit:2,env,workflow:()=>{calls++;return new Promise(resolve=>completions.push(resolve));}});
  const first=app(request(),'one'),second=app(request(),'two');
  while(completions.length<2)await new Promise(r=>setImmediate(r));
  assert.equal((await app(request(),'three')).status,429);assert.equal(calls,2);assert.equal((await status(app)).dispatchCreditsRemaining,4);
@@ -78,9 +78,17 @@ test('a longer provider cooldown is not silently shortened to one minute',async(
 });
 
 test('later concurrent short provider cooldown cannot overwrite a longer pause',async()=>{
- let time=0;const pending=[];const app=createApp({env:{...env,ACCESS_MODE:'judging'},now:()=>time,workflow:()=>new Promise(resolve=>pending.push(resolve))});
+ let time=0;const pending=[];const app=createApp({concurrencyLimit:2,env:{...env,ACCESS_MODE:'judging'},now:()=>time,workflow:()=>new Promise(resolve=>pending.push(resolve))});
  const long=app(request(),'one'),short=app(request(),'two');while(pending.length<2)await new Promise(r=>setImmediate(r));
  pending[0]({status:502,body:{code:'provider_rate_limited',retryAfterMs:3600000,cards:[]}});await long;time=1000;
  pending[1]({status:502,body:{code:'provider_rate_limited',retryAfterMs:60000,cards:[]}});await short;time=61000;
  const s=await status(app);assert.equal(s.liveExecutionAllowed,false);assert.equal(s.providerRetryAt,'1970-01-01T01:00:00.000Z');
+});
+
+test('production admits one live submission and busy attempts consume no reservations',async()=>{
+ let finish,started;const begin=new Promise(r=>started=r);let calls=0;
+ const app=createApp({env:{...env,ACCESS_MODE:'judging'},workflow:async()=>{calls++;started();return await new Promise(r=>finish=r);}});
+ const first=app(request(),'one');await begin;const blocked=await app(request(),'two');assert.equal(blocked.status,429);const data=await blocked.json();assert.equal(data.code,'busy');assert.equal(data.retryable,true);assert.equal(calls,1);assert.match(data.message,/No provider call or reservation/);
+ const busy=await status(app);assert.equal(busy.maxConcurrentSubmissions,1);assert.equal(busy.activeSubmissions,1);
+ finish({status:200,body:{cards:[]}});const result=await(await first).json();assert.equal(result.pilotBudget.reservedThisProcess,4);assert.equal((await status(app)).activeSubmissions,0);
 });

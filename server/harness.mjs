@@ -5,9 +5,10 @@ import {join,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=dirname(dirname(fileURLToPath(import.meta.url)));
 export const HARNESS_VERSION='0.1.26';
+export const PROCESS_TIMEOUT_MS=35000;
 export class HarnessError extends Error{constructor(code){super(code);this.code=code;}}
 function providerStopError(stderr){const stop=stderr.match(/^COMPASS_PROVIDER_STOP:(401|403|429)(?::(\d+))?\r?\n/m);if(!stop)return null;const error=new HarnessError(stop[1]==='429'?'provider_rate_limited':'provider_auth');const delay=Number(stop[2]);error.retryAfterMs=Number.isSafeInteger(delay)&&delay>=60000&&delay<=8e15?delay:60000;return error;}
-export function executeProcess(command,args,{env,cwd,input,signal,spawnImpl=spawn,timeoutMs=22000,maxBytes=1_000_000,terminationWaitMs=2000}={}){
+export function executeProcess(command,args,{env,cwd,input,signal,spawnImpl=spawn,timeoutMs=PROCESS_TIMEOUT_MS,maxBytes=1_000_000,terminationWaitMs=2000}={}){
  return new Promise((resolve,reject)=>{
   if(signal?.aborted){reject(new HarnessError('cancelled'));return;}
   let child,out=[],err=[],size=0,settled=false,timer,terminationTimer,terminationError;

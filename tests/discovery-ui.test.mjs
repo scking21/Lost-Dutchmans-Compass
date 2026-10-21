@@ -113,3 +113,17 @@ test('judging UI supports explicit operations without displaying a shared pilot 
  assert.match(ui.elements.get('readiness').textContent,/Live judging access/);assert.doesNotMatch(ui.elements.get('readiness').textContent,/12|unlimited/);
  await ui.submit();assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,1);
 });
+
+test('busy confirmation retains its unconsumed choice for a manual retry',async()=>{
+ let count=0;const choice={token:'opaque-choice',name:'Usery',address:'Exact address',note:'Confirm identity'};
+ const ui=await mount(()=>++count===1?{code:'catalogue_choice',catalogueChoice:choice,cards:[]}:{code:'busy',retryable:true,message:'Another live request is running. No reservation was made.',cards:[]});
+ await ui.submit('resolve-local');await ui.submit('confirm-local');assert.equal(ui.elements.get('confirm-local').hidden,false);assert.equal(ui.elements.get('confirm-local').disabled,false);assert.match(ui.elements.get('status').textContent,/Another live request/);
+ assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,2);
+});
+
+test('busy rerank preserves the same retained pool for one explicit manual retry',async()=>{
+ let n=0;const ui=await mount(()=>++n===2?{code:'busy',retryable:true,message:'Another request is running; click again after it finishes.',cards:[]}:result);
+ await ui.submit();ui.change('favorite','Dune');assert.equal(ui.elements.get('rerank').disabled,false);await ui.submit('rerank');
+ assert.equal(ui.elements.get('rerank').disabled,false);assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,2);
+ await ui.submit('rerank');const bodies=ui.calls.filter(c=>c.url==='/api/recommend').map(c=>JSON.parse(c.options.body));assert.equal(bodies.length,3);assert.equal(bodies[2].candidateSetId,bodies[1].candidateSetId);assert.deepEqual(bodies[2].candidateIds,bodies[1].candidateIds);assert.equal(bodies[2].favorite,'Dune');
+});
