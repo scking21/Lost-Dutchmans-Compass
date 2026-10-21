@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-21",
+  "runtimeRevision": "ef5abcb0f9ff2c81d3d5946602d1ae3625386aa5",
+  "runtimeTree": "b523b347a02d60b09fd7b8e84ff026f44f014af6",
+  "reviewedLocalRevision": "93db7980b3f14547428f1bebc2dcc4ffda2da0d9",
+  "deployment": {
+    "id": "dep-dbcg917avr4c73ci0fsg",
+    "liveAt": "2026-10-21T18:29:52.205847Z",
+    "plan": "existing free Render"
+  },
+  "offlineTests": {
+    "passed": 137,
+    "failed": 0,
+    "independentReview": "PASS"
+  },
+  "uiRepair": {
+    "rankBound": "selected places + selected signals + 1",
+    "expiry": "Visible expired state, timer and click-time rank guard; explicit remove/resolve/confirm recovery only. Server TTL authoritative.",
+    "serverSecurityChanged": false,
+    "design": "Established tan palette preserved"
+  },
+  "A2": {
+    "purpose": "fresh functional demonstration, not comparison",
+    "confirmedPlaces": 3,
+    "confirmedTastes": 2,
+    "rankRequests": 1,
+    "returnedOptions": 2,
+    "selectedOptions": 3,
+    "omittedOptions": 1,
+    "terminal": "rank_partial",
+    "perResultExplanationsReturned": false,
+    "observedDispatches": 20,
+    "reservedDispatches": 21,
+    "countsComplete": true,
+    "retryAttempted": false,
+    "realBrowserVerified": [
+      "explicit identity selection",
+      "dynamic six-call bound",
+      "two of three coverage disclosure",
+      "both returned cards in provider order",
+      "access warnings",
+      "missing explanation disclosure",
+      "local shortlist without provider calls"
+    ],
+    "inputBindingEvidence": "Confirmation receipts plus observed UI selection plus reviewed deterministic request construction; submitted handle arrays not directly wire-captured. Actual server rank-input hash retained privately.",
+    "limitation": "Partial functional result only. No general reliability, preference-quality, real-visitor benefit or event-eligibility conclusion."
+  },
+  "priorOutcomesPreserved": {
+    "frozenBroaderComparison": "First identity unresolved; two dispatches, zero confirmations, zero ranks.",
+    "fixedFourPlaceF1": "Three places confirmed; fourth unresolved. Nine observed, eleven reserved, zero ranks.",
+    "adaptiveA1": "Two fresh tastes confirmed; final rank never submitted and place confirmations expired. Six observed, six reserved.",
+    "oldBlindedQualityDiagnostic": "Three complete pairs, all twelve judgments ties; one unresolved profile unscored."
+  },
+  "iterationAccounting": {
+    "observedDispatches": 41,
+    "reservedDispatches": 44,
+    "includes": "Original blocked comparison, two incident probes, F1, A1 and A2",
+    "earlierRestorationAllowance": "Separate64-reservation history; incomplete prior observed counts remain unknown."
+  },
+  "remainingGaps": [
+    "Full selected-option ranking coverage",
+    "Provider account allowance unknown",
+    "Mobile and cold-start recovery unverified",
+    "Audience benefit unproven",
+    "Organizer acceptance of agentic-tool evidence",
+    "Response-derived data remains in historical public commits; no history rewrite performed"
+  ],
+  "providerPayloadPublished": false,
+  "submissionMade": false
+}

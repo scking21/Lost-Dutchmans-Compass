@@ -88,6 +88,6 @@
     "source": "Independently retrieved Visit Mesa and Apache Junction tourism listings, linked in catalogue; official venue homepage confirms public street address.",
     "matchingChange": "One exact recorded alias for real-03. Full normalized address, place type, UUID binding and explicit user confirmation remain mandatory. No fuzzy matching.",
     "test": "Synthetic UUID regression fails before alias addition; accepts alias with matching address/type, rejects wrong address/name/type.",
-    "liveStatus": "Correction candidate not yet functionally rehearsed."
+    "liveStatus": "Resolved and explicitly confirmed in subsequent fresh browser runs; latest rank returned only two of three selected options. See final-functional-verification.json. Original comparison remains blocked."
   }
 }
