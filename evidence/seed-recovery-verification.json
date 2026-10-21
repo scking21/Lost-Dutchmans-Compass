@@ -1,0 +1,16 @@
+{
+  "status": "offline candidate; not deployed or live-verified",
+  "baseVerifiedRuntime": "e9c725c96bb1b6d77f34676bbce3beac63a314b6",
+  "change": "Require an explicit cultural-identity choice and offer no-call none-of-these/edit recovery while preserving the verified place pool.",
+  "regressions": {
+    "before": "Two new actual-handler tests failed on the unchanged prior code.",
+    "afterFocused": "25/25 actual-handler tests pass.",
+    "liveProviderCalls": 0,
+    "afterFull": "112/112 offline tests pass, including eight actual pinned CLI subprocess tests"
+  },
+  "limitations": [
+    "No automatic query rewriting or title/author stripping.",
+    "No claim that The Hobbit now resolves.",
+    "Prior frozen diagnostic outcomes are unchanged."
+  ]
+}

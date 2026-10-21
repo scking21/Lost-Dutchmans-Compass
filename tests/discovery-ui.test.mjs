@@ -20,7 +20,7 @@ async function mount(response,statusOverrides={}) {
   addEventListener(k,fn){this.listeners[k]=fn;}
   focus(){activeElement=this;}
  }
- for(const id of ['workflow','results','payload','status','badge','run','rerank','choices','seed','destination','favorite','type','verified','mode','heritage','form','readiness','scope-summary','mode-summary','discovery-options','resolve-local','rank-local','confirm-local','local-choice'])elements.set(id,new Element('div'));
+ for(const id of ['workflow','results','payload','status','badge','run','rerank','choices','seed','reject-seed','destination','favorite','type','verified','mode','heritage','form','readiness','scope-summary','mode-summary','discovery-options','resolve-local','rank-local','confirm-local','local-choice'])elements.set(id,new Element('div'));
  elements.get('destination').value='Mesa';elements.get('favorite').value='Arrival';elements.get('type').value='movie';elements.get('mode').value='qloo';elements.get('choices').hidden=true;
  const panel=new Element('section');
  const document={getElementById:id=>elements.get(id),createElement:tag=>new Element(tag),querySelector:()=>panel,get activeElement(){return activeElement;}};
@@ -126,4 +126,23 @@ test('busy rerank preserves the same retained pool for one explicit manual retry
  await ui.submit();ui.change('favorite','Dune');assert.equal(ui.elements.get('rerank').disabled,false);await ui.submit('rerank');
  assert.equal(ui.elements.get('rerank').disabled,false);assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,2);
  await ui.submit('rerank');const bodies=ui.calls.filter(c=>c.url==='/api/recommend').map(c=>JSON.parse(c.options.body));assert.equal(bodies.length,3);assert.equal(bodies[2].candidateSetId,bodies[1].candidateSetId);assert.deepEqual(bodies[2].candidateIds,bodies[1].candidateIds);assert.equal(bodies[2].favorite,'Dune');
+});
+
+const wrongBooks={code:'choose_seed',workflowState:'needs_input',message:'Choose the intended match',choices:[{entityId:'11111111-1111-4111-8111-111111111111',name:'Fixture Author Sketchbook'},{entityId:'22222222-2222-4222-8222-222222222222',name:'Fixture Literary Biography'}],cards:[]};
+test('ambiguous favorites require an explicit non-default choice before another discovery',async()=>{
+ const ui=await mount(wrongBooks);await ui.submit();const seed=ui.elements.get('seed');
+ assert.equal(seed.children[0].value,'');assert.equal(seed.children[0].disabled,true);assert.equal(seed.value,'');
+ const before=ui.calls.length;await ui.submit();assert.equal(ui.calls.length,before);assert.equal(ui.document.activeElement,seed);
+ seed.value=wrongBooks.choices[1].entityId;seed.listeners.change();assert.equal(ui.calls.length,before);await ui.submit();
+ const body=JSON.parse(ui.calls.filter(c=>c.url==='/api/recommend').at(-1).options.body);assert.equal(body.seedId,wrongBooks.choices[1].entityId);
+});
+test('none-of-these recovery preserves the verified pool and never rewrites or submits the favorite',async()=>{
+ const ui=await mount(options=>JSON.parse(options.body).action==='resolve-catalogue'?{code:'catalogue_resolved',resolvedPlaceCount:2,catalogueSetId:'verified-pool',cards:[]}:wrongBooks);
+ ui.change('type','book');ui.change('favorite','Fixture novel by Fixture Author');await ui.submit('resolve-local');await ui.submit('rank-local');
+ const before=ui.calls.length;await ui.submit('rank-local');assert.equal(ui.calls.length,before);
+ ui.elements.get('reject-seed').listeners.click();assert.equal(ui.calls.length,before);assert.equal(ui.document.activeElement,ui.elements.get('favorite'));
+ assert.equal(ui.elements.get('favorite').value,'Fixture novel by Fixture Author');assert.equal(ui.elements.get('choices').hidden,true);assert.equal(ui.elements.get('rank-local').disabled,false);
+ ui.change('favorite','Fixture novel');await ui.submit('rank-local');const bodies=ui.calls.filter(c=>c.url==='/api/recommend').map(c=>JSON.parse(c.options.body));
+ assert.equal(bodies.at(-1).catalogueSetId,'verified-pool');assert.equal(bodies.at(-1).seedId,undefined);assert.equal(bodies.at(-1).favorite,'Fixture novel');
+ const html=await readFile(new URL('../public/index.html',import.meta.url),'utf8');assert.match(html,/<button id="reject-seed" type="button"/);
 });
