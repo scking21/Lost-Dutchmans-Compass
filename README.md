@@ -4,9 +4,13 @@ A taste-to-place prototype for first-time Mesa-area visitors, using the official
 
 ## Current revision and evidence
 
-This revision starts from public source `f7a9cd007b776fe3aa351678b47af8472b87cd73`, deployed on October 21, 2026. Earlier source `64fd67a250c5ba882d2222caca2cc7b99d6174ad` supplies the historical desktop discovery evidence below. That deployed revision had a real desktop describe→recommend check on 2026-10-21, including returned-card rendering, shortlist, hide, restore and stale-result clearing. The narrated screenshot walkthrough was rendered and technically verified separately. Earlier versions also exercised live rank. These historical checks do not verify this candidate’s new local-resolution path. Mobile remains unverified.
+The verified runtime revision is [`eedf07b161990c0df5059c988c52b6e101cfa86e`](https://github.com/scking21/Lost-Dutchmans-Compass/commit/eedf07b161990c0df5059c988c52b6e101cfa86e), tree `ef8546780d09134fdb5a73550fe2ae8f1ab5441f`, deployed on October 21, 2026. Its pre-publication offline suite passed 87 tests, including seven actual subprocess tests of the installed pinned CLI with synthetic, in-memory provider fixtures. The dated `evidence/confirmation-verification.json` records the state before live verification and is retained unchanged.
 
-Two bounded local-resolution pilots stopped unresolved before ranking on October 21, 2026. Each reported two workflows and three dispatches, with four credits reserved; combined totals are six observed and eight reserved. The old app did not preserve the official issue kind, so those live failures cannot now be classified as ambiguity versus no match. Neither failure proves a venue is absent. This revision adds classified diagnostics and an explicit confirmation path; its live verification remains pending. Its public regression fixtures are wholly synthetic; they are not provider-response records. Do not infer current deployment state from this README.
+At 04:34–04:36 UTC on October 21, the deployed revision completed the bounded local-resolution → explicit identity-confirmation → two-place rank path. Desktop returned-card rendering and local shortlist, hide and restore controls were checked; those local controls made no additional provider calls. This establishes the feasibility of that one bounded run, not reliability across users or visitor usefulness. Private live receipts are not public fixtures. One synthetic development comparison found no demonstrated incremental benefit; it is not a same-model ablation or a real-visitor study.
+
+At 04:39 UTC, a fresh browser session could open the public demo but had zero remaining pilot capacity and disabled live actions. The current deployment therefore does not provide end-to-end judging access. No reset, allowance increase or further provider run is implied by these documentation updates. Mobile, cold-start recovery and independent multi-session live operation remain unverified.
+
+Earlier source `64fd67a250c5ba882d2222caca2cc7b99d6174ad` supplies historical desktop describe→recommend evidence. The technically verified 106.6-second narrated screenshot walkthrough depicts that older discovery flow, not the new local-confirmation flow. Two later local-resolution pilots stopped unresolved before ranking; the older app did not retain enough issue detail to classify those failures. The successful newer run does not retroactively explain them. Public regression fixtures at the verified revision are synthetic; old public commits still retain response-derived material and that compliance concern remains unresolved.
 
 ## Two product paths
 
@@ -50,7 +54,7 @@ The CLI runs with fixed arguments, JSON stdin, private temporary HOME/QLOO_HOME 
 Requires Node.js 22.19.0 or newer.
 
 - `npm ci` installs the pinned official package from the lockfile.
-- Configure `QLOO_API_KEY` only through an approved server secret flow and set `APP_ORIGIN` to the deployed origin.
+- Configure `QLOO_API_KEY` only through an approved server secret flow and set `APP_ORIGIN` to the deployed origin (or `http://localhost:3000` locally). Supply these as process environment variables; `npm start` does not automatically load `.env.example` or a `.env` file.
 - `npm start` serves the app; it makes no Qloo call until an explicit live action.
 - `npm test` runs the complete offline suite. The official-process tests need the installed pinned package and use injected in-memory provider fixtures, not live credentials.
 - The dependency-free suite can run with `node --test $(find tests -maxdepth 1 -name '*.test.mjs' ! -name 'official-process.test.mjs' | sort)`.
@@ -61,6 +65,15 @@ Mock/DOM fixtures establish contracts, not live package compatibility, real-brow
 
 Use the event’s complete current requirements, not whichever page is least demanding. The kit’s CLI route is supported; broader agentic and Qloo-on/off evidence requirements still need explicit evidence. Historical reported agent use must not be confused with an in-app agent or a newly reproduced run. Do not claim comparative quality, an autonomous product, current access, unrestricted judge readiness or event eligibility from a successful API call.
 
-The next live step, if separately authorized, is the four-dispatch maximum place-resolution pilot. Its stopping conditions are documented in the explicit UI and tests. Further ranking calls require their own bounded allowance. A subsequent audience study must use identical candidate facts and access caveats for both arms, preserve raw outcomes, and distinguish synthetic technical probes from real first-time visitors.
+The next decision is a verified allowance-backed judging-access plan; the completed pilot has exhausted the deployed process capacity. Further provider calls, capacity changes or deployments require separate authorization. Screenshots and the synthetic fixture lab do not replace a functional public demo. A subsequent audience study must use identical candidate facts and access caveats for both arms, preserve raw outcomes, and distinguish synthetic technical probes from real first-time visitors.
 
 Project source is MIT. The pinned Qloo package is MIT; its license and notices are retained in `THIRD_PARTY_NOTICES.md` and `evidence/`. Do not remove third-party notices from runtime distributions.
+
+## Submission references and remaining blockers
+
+- Public source: https://github.com/scking21/Lost-Dutchmans-Compass
+- Hosted demo: https://lost-dutchmans-compass.onrender.com (public page; live actions exhausted at the dated check above).
+- [Official rules](https://qloo.devpost.com/rules) require a working Qloo-integrated agentic tool, agent-framework application or existing-agent integration, public complete source with a detectable open-source license, a feature description and free unrestricted testing through the judging period.
+- The [event overview](https://qloo.devpost.com/) requires an externally published end-to-end demo and says a video is optional. The existing walkthrough is supplementary historical evidence.
+- The no-model official CLI route is implemented. A conversational/autonomous in-app agent is not implemented. Historical reported external browser-agent use is not a reproduced goal-driven agent run of the verified revision; agentic eligibility remains unestablished.
+- Current blockers include exhausted live access, the unresolved agentic-route evidence, historical response-data retention and unproven audience benefit. This is not a claim of submission readiness.
