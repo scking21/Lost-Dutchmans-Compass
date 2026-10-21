@@ -14,6 +14,14 @@ The earlier twelve-call shared testing ceiling is removed in judging mode. Initi
 
 Earlier source `64fd67a250c5ba882d2222caca2cc7b99d6174ad` supplies historical desktop describe→recommend evidence. The technically verified 106.6-second narrated screenshot walkthrough depicts that older discovery flow, not the new local-confirmation flow. Two later local-resolution pilots stopped unresolved before ranking; the older app did not retain enough issue detail to classify those failures. The successful newer run does not retroactively explain them. Public regression fixtures at the verified revision are synthetic; old public commits still retain response-derived material and that compliance concern remains unresolved.
 
+## Broader reviewed corridor candidate
+
+The new comparison flow lets a visitor select two to four of six addressed, unblocked catalogue entries across Mesa, Apache Junction and Superior. It does not claim a strict Mesa city boundary, travel-time constraint, safe route or current venue access. Every place and each of one or two cultural favorites is resolved separately, then explicitly confirmed by describing its server-retained identity. Names, full addresses and place types must match the independently sourced catalogue. Cultural matches require explicit selection even when only one candidate is returned; “None of these match” never submits a substitute.
+
+Identity tokens are session-owned, bounded and expire after 15 minutes. Each explicit name-resolution action permits two dispatches; confirmation permits one. A separate rank action accepts two to four confirmed options and one or two confirmed signals, with an exact `N + M + 1` guard (at most seven dispatches) in one CLI subprocess. There is no automatic batching, retry, ranking or query rewrite. All returned options remain visible in provider order; provider omissions remain unranked. Confirmed-favorite checkboxes support comparing the same choices under one or both signals without resolving again. The app does not supply signal weights or compare affinities numerically across requests.
+
+Broad discovery now preserves actual returned per-result `explainability` when present, bounded and displayed as text. The pinned rank schema has no `explain` parameter; the app does not send one, and reports missing per-result detail honestly. These additions are an offline candidate until the dated verification record is updated; the earlier three-pair tied diagnostic remains unchanged and does not prove value for the broader flow.
+
 ## Two product paths
 
 ### Reviewed local shortlist

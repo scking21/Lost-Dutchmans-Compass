@@ -1,0 +1,31 @@
+{
+  "status": "pre-deployment offline candidate",
+  "baseRuntime": "b8a967a35562922c2216fcf7f221c1e17443d97b",
+  "offlineTests": {
+    "passed": 127,
+    "failed": 0,
+    "actualPinnedCliNewFlow": "Four place resolutions/confirmations, two taste resolutions/confirmations, complete four-result rank using seven guarded dispatches; synthetic no-network transport."
+  },
+  "acceptance": [
+    "Two to four selected places from six addressed unblocked catalogue entries.",
+    "Each place and one or two cultural favorites explicitly confirmed through a session-owned handle.",
+    "One rank subprocess, options+signals+1 dispatch guard, maximum seven.",
+    "All returned rank positions preserved, omissions explicit.",
+    "No invented explanation; only bounded actual per-result detail when returned.",
+    "Owner/role/expiry checks; busy does not consume confirmation; no automatic follow-up calls."
+  ],
+  "plannedLiveVerification": {
+    "maximumAdditionalReservedDispatches": 39,
+    "priorBatchReservedUpperBound": 64,
+    "providerAllowance": "unknown",
+    "conditions": "Only after independent exact-source review. Four predeclared place identities, two favorites, three rank requests; stop on shared identity failure or provider stop. No substitutions or retries."
+  },
+  "browserLayout": "Local cloud browser cannot connect to the execution workspace localhost; deployed browser QA pending.",
+  "unfavorablePriorEvidence": "Previous three complete synthetic comparison pairs all tied; one profile unresolved. No claimed quality advantage.",
+  "reviewFixes": [
+    "Reject verified-only requests before reservation or calls.",
+    "Preserve catalogue-specific conflict warnings in selection, confirmation and ranked cards.",
+    "Ignore unconfirmed favorite text for token-based operations."
+  ],
+  "provenance": "Audit includes hashed owner-session binding and request start; confirmation includes server-created confirmation/expiry times, while cultural provider UUID stays private."
+}

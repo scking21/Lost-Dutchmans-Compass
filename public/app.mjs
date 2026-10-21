@@ -77,6 +77,7 @@ function renderResults(focusId=null,focusAction=null){
   const exclude=node('button','Hide locally · no taste signal');exclude.type='button';exclude.setAttribute('aria-label',`Hide locally: ${card.name} · no taste signal`);exclude.addEventListener('click',()=>{refinement.toggleExcluded(card.entityId);renderResults(card.entityId,'restore');});
   if(focusId===card.entityId&&focusAction==='shortlist')nextFocus=shortlist;
   actions.append(shortlist,exclude);content.append(actions);
+  if(card.providerResultExplanation!==undefined&&card.providerResultExplanation!==null){const detail=node('details','');detail.append(node('summary','Qloo returned detail for this place'),node('pre',JSON.stringify(card.providerResultExplanation,null,2)),node('p','Provider-returned aggregate context, not a causal explanation about you or verified visitor access.'));content.append(detail);}
   const evidence=node('details','');evidence.append(node('summary','Place evidence'),node('p',card.explanation),node('p',`Qloo entity: ${card.entityId}`),node('p',card.mapping),node('p',`Type evidence: ${card.typeEvidence||'not supplied'}`));content.append(evidence);
   article.append(number,content);$('results').append(article);
  }

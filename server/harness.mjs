@@ -25,18 +25,19 @@ export function executeProcess(command,args,{env,cwd,input,signal,spawnImpl=spaw
  });
 }
 export async function runHarness(operation,input,{key,signal,execute=executeProcess,dispatchBudget}={}){
- if(dispatchBudget!==undefined&&(dispatchBudget!==1||operation!=='describe'||typeof input?.entity!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.entity)))throw new HarnessError('budget_override_denied');
+ const rankBudget=operation==='rank'&&input?.option_type==='place'&&Array.isArray(input?.options)&&Array.isArray(input?.signals)&&input.options.length>=2&&input.options.length<=4&&input.signals.length>=1&&input.signals.length<=2&&[...input.options,...input.signals].every(v=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v))&&new Set([...input.options,...input.signals].map(v=>v.toLowerCase())).size===input.options.length+input.signals.length&&dispatchBudget===input.options.length+input.signals.length+1;
+ if(dispatchBudget!==undefined&&!rankBudget&&(dispatchBudget!==1||operation!=='describe'||typeof input?.entity!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.entity)))throw new HarnessError('budget_override_denied');
  if(!['describe','recommend','rank'].includes(operation))throw new HarnessError('operation_denied');
  if(typeof key!=='string'||!key)throw new HarnessError('not_configured');
  if(signal?.aborted)throw new HarnessError('cancelled');
  let preserveTemp=false;
  const temp=await mkdtemp(join(tmpdir(),'compass-harness-'));await mkdir(join(temp,'home'));await mkdir(join(temp,'work'));
  try{
-  const env={PATH:process.env.PATH||'/usr/bin:/bin',HOME:join(temp,'home'),QLOO_HOME:join(temp,'state'),QLOO_API_KEY:key,QLOO_BASE_URL:'https://hackathon.api.qloo.com',QLOO_TRUSTED_BASE_URL:'https://hackathon.api.qloo.com',COMPASS_EGRESS_GUARD:'1',COMPASS_WORKFLOW_BUDGET:dispatchBudget===1?'1':operation==='rank'?'5':'2',NO_COLOR:'1'};
+  const env={PATH:process.env.PATH||'/usr/bin:/bin',HOME:join(temp,'home'),QLOO_HOME:join(temp,'state'),QLOO_API_KEY:key,QLOO_BASE_URL:'https://hackathon.api.qloo.com',QLOO_TRUSTED_BASE_URL:'https://hackathon.api.qloo.com',COMPASS_EGRESS_GUARD:'1',COMPASS_WORKFLOW_BUDGET:dispatchBudget!==undefined?String(dispatchBudget):operation==='rank'?'5':'2',NO_COLOR:'1'};
   const result=await execute(process.execPath,['--import',join(root,'server/egress-guard.mjs'),join(root,'node_modules/@qloo/qloo-harness/dist/bin.js'),'exec',operation],{env,cwd:join(temp,'work'),input:JSON.stringify(input),signal});
   const stop=providerStopError(result.stderr+'\n');if(stop)throw stop;
   let data;try{data=JSON.parse(result.stdout);}catch{throw new HarnessError('invalid_harness_output');}
-  const matches=[...result.stderr.matchAll(/^COMPASS_EGRESS:([1-5])$/gm)];
+  const matches=[...result.stderr.matchAll(/^COMPASS_EGRESS:([1-7])$/gm)];
   return {data,exitCode:result.code,dispatches:matches.length?Number(matches.at(-1)[1]):0};
  }catch(error){if(error.code==='process_termination_unknown')preserveTemp=true;throw error;}finally{if(!preserveTemp)await rm(temp,{recursive:true,force:true});}
 }
