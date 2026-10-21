@@ -1,7 +1,8 @@
-// Frozen before provider testing; independently sourced identity/type evidence, not live access verification.
+// Identity/type catalogue frozen before provider testing; local legend topic evidence added October 21, 2026 from the linked official pages. Neither verifies current access.
 export const catalogue=[
   {
     "id": "real-01",
+    "legendEvidence": "The museum describes its mission as preserving Superstition Mountain history, legends and stories (official About Us page).",
     "name": "Superstition Mountain Lost Dutchman Museum",
     "aliases": [
       "Superstition Mountain Museum"
@@ -49,6 +50,7 @@ export const catalogue=[
   },
   {
     "id": "real-03",
+    "legendEvidence": "The official Attractions page describes a Lost Dutchman mine exhibit and tours about local legends and lore. These are attraction descriptions, not verified historical claims.",
     "name": "Goldfield Ghost Town",
     "aliases": ["Goldfield Ghost Town and Mine Tours Inc."],
     "address": "4650 N Mammoth Mine Road, Apache Junction, AZ 85119",

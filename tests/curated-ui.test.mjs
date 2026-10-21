@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {mountCurated} from '../public/curated-ui.mjs';
 async function mount(respond,clock={}){const elements=new Map(),calls=[];let focus;
  class E{constructor(tag){this.tagName=tag;this.children=[];this.listeners={};this.attributes={};this.value='';this.checked=false;this.hidden=false;this.textContent='';}append(...c){this.children.push(...c);}replaceChildren(...c){this.children=c;}addEventListener(k,f){this.listeners[k]=f;}setAttribute(k,v){this.attributes[k]=v;}focus(){focus=this;}}
- for(const id of ['form','place','type','favorite','confirm','add-place','add-taste','rank','none','clear','places','tastes','choice','choice-box','results','readiness','status','audit','expiry'])elements.set('curated-'+id,new E('div'));
+ for(const id of ['form','place','type','favorite','confirm','add-place','add-taste','rank','none','clear','places','tastes','choice','choice-box','results','readiness','status','audit','expiry','interests','interest-guidance'])elements.set('curated-'+id,new E('div'));
  elements.get('curated-favorite').value='Fixture Film';elements.get('curated-type').value='movie';elements.get('curated-choice-box').hidden=true;
  const document={getElementById:id=>elements.get(id),createElement:tag=>new E(tag)};
  const fetch=async(url,options)=>{calls.push({url,options});return {json:async()=>url==='/api/status'?{configured:true,liveExecutionAllowed:true}:respond(JSON.parse(options.body))};};
@@ -48,4 +48,26 @@ test('missing expiry fails closed, while deselected expired taste does not block
  ui.elements.get('curated-choice').listeners.change();assert.equal(ui.elements.get('curated-rank').disabled,true);await ui.click('rank');assert.equal(ui.provider().length,0);
  const toggle=ui.elements.get('curated-tastes').children[0].children.find(c=>c.tagName==='input');toggle.checked=false;toggle.listeners.change();
  assert.equal(ui.elements.get('curated-rank').disabled,false);assert.match(ui.elements.get('curated-rank').textContent,/up to 4 calls/);assert.equal(ui.provider().length,0);
+});
+
+const textOf=e=>[e.textContent,...e.children.map(textOf)].join(' ');
+const interestToggle=(ui,id)=>ui.elements.get('curated-interests').children.flatMap(e=>e.children).find(e=>e.value===id);
+test('travel interests guide all eligible choices locally without selecting identities or sending requests',async()=>{
+ const ui=await mount(()=>choice),select=ui.elements.get('curated-place'),before=select.children.map(e=>e.value);
+ const history=interestToggle(ui,'history');assert.ok(history,'explicit history checkbox exists');history.checked=true;history.listeners.change();
+ const legends=interestToggle(ui,'legends');assert.ok(legends);legends.checked=true;legends.listeners.change();
+ const guide=textOf(ui.elements.get('curated-interest-guidance'));assert.match(guide,/Goldfield Ghost Town/);assert.match(guide,/Superstition Mountain Lost Dutchman Museum/);assert.match(guide,/local catalogue/i);
+ assert.deepEqual(select.children.map(e=>e.value),before);assert.equal(ui.provider().length,0);assert.equal(ui.mounted.places.length,0);assert.equal(ui.mounted.tastes.length,0);
+ await ui.click('clear');assert.equal(history.checked,false);assert.equal(legends.checked,false);
+});
+test('omitted submitted venues remain visible unranked with source links and local shortlist',async()=>{
+ const ui=await mount(()=>({code:'curated_results',confirmedTastes:[{name:'Fixture',type:'movie'}],candidateCount:3,explanationNote:'No causal explanation.',submittedCatalogueIds:['real-07','real-06','real-03'],omittedCatalogueIds:['real-03'],cards:[{catalogueId:'real-07',name:'Usery fixture',resultPosition:1,affinity:.7,providerExplanation:null},{catalogueId:'real-06',name:'Museum fixture',resultPosition:2,affinity:.6,providerExplanation:null}]}));
+ await ui.mounted.request('curated-rank');const cards=ui.elements.get('curated-results').children.filter(e=>e.className==='card');assert.equal(cards.length,3);assert.match(textOf(cards[0]),/1. Usery fixture/);assert.match(textOf(cards[1]),/2. Museum fixture/);assert.match(textOf(cards[2]),/Goldfield Ghost Town/);assert.match(textOf(cards[2]),/Unranked/);assert.match(textOf(cards[2]),/affinity: unavailable/);assert.ok(cards[2].children.some(e=>e.tagName==='a'&&e.href==='https://goldfieldghosttown.com/attractions/'));
+ const pick=cards[2].children.find(e=>e.tagName==='button');pick.listeners.click();assert.equal(pick.attributes['aria-pressed'],'true');const legends=interestToggle(ui,'legends');legends.checked=true;legends.listeners.change();const updated=ui.elements.get('curated-results').children.filter(e=>e.className==='card');assert.match(textOf(updated[2]),/Legends/);assert.equal(updated[2].children.find(e=>e.tagName==='button').attributes['aria-pressed'],'true');assert.equal(ui.provider().length,1);assert.equal(JSON.parse(ui.provider()[0].options.body).interests,undefined);
+});
+test('omission rendering accepts only submitted catalogue IDs and never duplicates returned cards',async()=>{
+ const ui=await mount(()=>({code:'curated_results',confirmedTastes:[],candidateCount:2,explanationNote:'',submittedCatalogueIds:['real-03','real-07'],omittedCatalogueIds:['real-03','real-03','real-06','unknown','real-07'],cards:[{catalogueId:'real-07',name:'Usery fixture',resultPosition:1,providerExplanation:null}]}));await ui.mounted.request('curated-rank');assert.equal(ui.elements.get('curated-results').children.filter(e=>e.className==='card').length,2);
+});
+test('zero returned ranks still show every submitted omitted option without a fake position',async()=>{
+ const ui=await mount(()=>({code:'curated_results',confirmedTastes:[],candidateCount:2,explanationNote:'',submittedCatalogueIds:['real-03','real-01'],omittedCatalogueIds:['real-03','real-01'],cards:[]}));await ui.mounted.request('curated-rank');const cards=ui.elements.get('curated-results').children.filter(e=>e.className==='card');assert.equal(cards.length,2);for(const c of cards){assert.match(textOf(c),/Unranked/);assert.doesNotMatch(textOf(c),/undefined|not a probability/);}await ui.click('clear');assert.equal(ui.elements.get('curated-results').children.length,0);const history=interestToggle(ui,'history');history.checked=true;history.listeners.change();assert.equal(ui.elements.get('curated-results').children.length,0);assert.equal(ui.provider().length,1);
 });

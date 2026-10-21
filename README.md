@@ -1,5 +1,13 @@
 # Lost Dutchman’s Compass
 
+## Local travel-interest candidate (not deployed)
+
+This candidate adds optional History, Legends and local lore, and Nature and outdoors checkboxes to the broader comparison. These are local catalogue-topic guidance, not extra Qloo inputs, a combined score, or an automatic boost. Every eligible place stays selectable; returned Qloo positions and affinities stay unchanged. History matches use explicit human-history catalogue categories; natural history is a separate nature topic. Legend evidence is limited to Goldfield and Superstition Mountain Lost Dutchman Museum, using their linked official Attractions and About Us pages checked October 21, 2026. This does not label Arizona Museum of Natural History or Usery as legend attractions.
+
+Submitted places omitted by Qloo are shown separately with independently sourced catalogue details, no provider position, and affinity unavailable. They retain source links and local shortlist controls. Their omission reason is unknown. Changing interests sends no request and preserves confirmed identities and the local shortlist. Clear resets the interests and results. No provider-call, identity, expiry, ownership or budget policy changes are included.
+
+Exact local verification on October 21: 144 tests ran, 135 passed; the same nine official CLI fixture tests that failed on the recovered baseline remain blocked by the missing pinned harness dependency. No package was installed. The dependency-free suite excludes both `official-process.test.mjs` and `curated-official.test.mjs` and passes 135/135. Focused UI and interest tests pass 15/15. These are offline fixture results, not live Qloo or recommendation-quality evidence. The previous exploratory ratings and tied comparisons are unchanged.
+
 A taste-to-place prototype for first-time Mesa-area visitors, using the official `@qloo/qloo-harness@0.1.26` CLI on the server. A cultural favorite is a discovery signal, not evidence of a person’s identity or future enjoyment.
 
 ## Current revision and evidence

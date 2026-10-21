@@ -43,3 +43,8 @@ test('control boundary and focus contrast meet three-to-one on adjacent surfaces
  for(const bg of ['#fffdf7','#f6f2e9','#eaece1'])assert.ok(ratio('#185d52',bg)>=3);
  assert.match(css,/:focus-visible\{outline:3px solid var\(--action\);outline-offset:4px/);
 });
+test('About describes current judging capacity without presenting old pilot exhaustion as current',()=>{
+ const about=html.slice(html.indexOf('<h3>What works, and what remains unverified?</h3>'));
+ assert.match(about,/Judging mode has no shared test ceiling/);assert.match(about,/one request at a time/);assert.match(about,/Busy requests require an explicit later retry/);assert.doesNotMatch(about,/64fd67a|eedf07b|at 04:39 UTC found live capacity exhausted/);
+ assert.match(about,/Mobile rendering remains unverified/);assert.match(about,/does not report the Qloo account allowance/);assert.match(about,/Current visitor access and safety remain unverified/);
+});
