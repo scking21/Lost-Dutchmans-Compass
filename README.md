@@ -4,9 +4,9 @@ A taste-to-place prototype for first-time Mesa-area visitors, using the official
 
 ## Current revision and evidence
 
-This revision starts from public source `91077a582038ca38351c761dc92c0a4874c9c971`, deployed on October 21, 2026. Earlier source `64fd67a250c5ba882d2222caca2cc7b99d6174ad` supplies the historical desktop discovery evidence below. That deployed revision had a real desktop describe→recommend check on 2026-10-21, including returned-card rendering, shortlist, hide, restore and stale-result clearing. The narrated screenshot walkthrough was rendered and technically verified separately. Earlier versions also exercised live rank. These historical checks do not verify this candidate’s new local-resolution path. Mobile remains unverified.
+This revision starts from public source `f7a9cd007b776fe3aa351678b47af8472b87cd73`, deployed on October 21, 2026. Earlier source `64fd67a250c5ba882d2222caca2cc7b99d6174ad` supplies the historical desktop discovery evidence below. That deployed revision had a real desktop describe→recommend check on 2026-10-21, including returned-card rendering, shortlist, hide, restore and stale-result clearing. The narrated screenshot walkthrough was rendered and technically verified separately. Earlier versions also exercised live rank. These historical checks do not verify this candidate’s new local-resolution path. Mobile remains unverified.
 
-At 04:11 UTC, the original two-museum resolution pilot stopped unresolved after two workflows and three observed dispatches, with all four reserved credits charged. It produced no completed pool and did not rank, retry or fall back. This revised fixed pair substitutes the independently sourced regional park for the unresolved second museum. Its live verification remains pending; it must not be represented as a successful two-choice result. Its public regression fixtures are wholly synthetic; they are not provider-response records. Do not infer current deployment state from this README.
+Two bounded local-resolution pilots stopped unresolved before ranking on October 21, 2026. Each reported two workflows and three dispatches, with four credits reserved; combined totals are six observed and eight reserved. The old app did not preserve the official issue kind, so those live failures cannot now be classified as ambiguity versus no match. Neither failure proves a venue is absent. This revision adds classified diagnostics and an explicit confirmation path; its live verification remains pending. Its public regression fixtures are wholly synthetic; they are not provider-response records. Do not infer current deployment state from this README.
 
 ## Two product paths
 
@@ -14,9 +14,10 @@ At 04:11 UTC, the original two-museum resolution pilot stopped unresolved after 
 
 1. Enter Mesa and a film, artist, book or TV favorite.
 2. Explicitly click **Resolve two local places · up to 4 calls**. The server resolves exactly Arizona Museum of Natural History and Usery Mountain Regional Park through official `describe` with type `place`.
-3. Each result must bind a valid provider identity to the exact independently sourced catalogue name/recorded alias, full normalized address and place type evidence. Unresolved names, ambiguity, contradictory types, duplicate IDs and mismatched addresses stop the operation without retry or ranking.
-4. Once both identities match, explicitly click **Rank matched local places · up to 7 calls**. Official `rank` receives that server-owned fixed pool and the resolved cultural signal. The original catalogue order is never shown as a previous Qloo ranking. Omitted provider options remain unranked.
-5. Shortlist, hide or restore returned cards locally. These controls never change provider order or affinity, create replacement recommendations, or make provider calls.
+3. Each result must bind a valid provider identity to the exact independently sourced catalogue name/recorded alias, full normalized address and place type evidence. No-match, contradictory types, duplicate IDs and mismatched addresses stop without retry or ranking. Official needs_input is classified as ambiguous or not_found when its bound issue permits that distinction; unknown states remain unknown.
+4. If the second place is ambiguous and exactly one returned candidate independently matches the fixed catalogue name/alias, full address and place type, the browser offers **Confirm exact identity · up to 1 call**. There is no automatic selection. This explicit click describes the server-retained UUID under a hard one-dispatch guard, then rechecks the returned ID, name, address and type before completing the pool. No raw provider ID is accepted from the browser. No exact match, multiple indistinguishable matches or first-place ambiguity stop honestly.
+5. Once both identities match, explicitly click **Rank matched local places · up to 7 calls**. Official `rank` receives that server-owned fixed pool and the resolved cultural signal. The original catalogue order is never shown as a previous Qloo ranking. Omitted provider options remain unranked.
+6. Shortlist, hide or restore returned cards locally. These controls never change provider order or affinity, create replacement recommendations, or make provider calls.
 
 This is a feasibility pilot with two choices, not evidence of audience usefulness or superiority. Fewer than two visible choices cannot demonstrate a personalized destination choice. The catalogue covers a regional corridor; it is not a promise that every venue lies inside Mesa city limits. Current hours, accessibility, permission and safety remain unknown.
 
@@ -36,9 +37,9 @@ Changing taste may rerank a retained result set, using a session-bound candidate
 
 ## Budget and safety
 
-The unchanged process ceiling is 12 reserved provider dispatch credits, with at most three live submissions by default. Discovery or local resolution reserves four; rank reserves seven. Failures and cancellations are not refunded. Resolution plus one rank reserves eleven. A deployment/restart may technically reset process counters, but does not authorize new account spending or replenish any separate verification allowance.
+The unchanged process ceiling is 12 reserved provider dispatch credits, with at most three live submissions by default. Discovery or local resolution reserves four; rank reserves seven. Failures and cancellations are not refunded. Resolution plus one rank reserves eleven; one explicit identity confirmation adds one, fitting the same twelve-credit and three-submission ceilings. A failed or cancelled confirmation consumes its token and reservation; it is never automatically retried. A deployment/restart may technically reset process counters, but does not authorize new account spending or replenish any separate verification allowance.
 
-There are no startup calls, automatic retries, bulk catalogue queries or arbitrary API proxy. Place resolution uses exactly two fixed allowlisted names; client-supplied identity lists cannot expand it. Ambiguity stops rather than guessing. Each action needs its own click. This capped pilot does not meet a promise of unrestricted judging access; judging access needs a separate explicit plan.
+There are no startup calls, automatic retries, bulk catalogue queries or arbitrary API proxy. Place resolution uses exactly two fixed allowlisted names; client-supplied identity lists cannot expand it. Ambiguity never guesses: only the bounded exact-match case can offer a separate confirmation click. Each action needs its own click. This capped pilot does not meet a promise of unrestricted judging access; judging access needs a separate explicit plan.
 
 The API enforces same-origin POSTs, JSON input validation, a 4 KiB request bound, restrictive browser CSP, session-bound candidate handles, concurrency limits and per-socket-address throttling. Origin checks protect against CSRF; they are not authentication. A shared reverse proxy can conservatively share a rate bucket.
 
@@ -54,7 +55,7 @@ Requires Node.js 22.19.0 or newer.
 - `npm test` runs the complete offline suite. The official-process tests need the installed pinned package and use injected in-memory provider fixtures, not live credentials.
 - The dependency-free suite can run with `node --test $(find tests -maxdepth 1 -name '*.test.mjs' ! -name 'official-process.test.mjs' | sort)`.
 
-Mock/DOM fixtures establish contracts, not live package compatibility, real-browser layout or recommendation quality. Current candidate test results are recorded in `evidence/local-pair-verification.json`; older verification files remain dated historical records.
+Mock/DOM fixtures establish contracts, not live package compatibility, real-browser layout or recommendation quality. Current candidate test results are recorded in `evidence/confirmation-verification.json`; older verification files remain dated historical records.
 
 ## Requirements and next evidence
 

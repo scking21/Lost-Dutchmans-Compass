@@ -1,6 +1,6 @@
 # Supported browser workflow
 
-A user or browser-capable agent can operate the public interface at https://lost-dutchmans-compass.onrender.com, subject to the current readiness indicator and separately authorized live-call allowance. Desktop returned cards and local interactions were verified on deployed `64fd67a` on October 21, 2026; earlier source also exercised live rank. The first deployed local-resolution pilot (91077a5, October 21 at 04:11 UTC) stopped unresolved with no rank or retry. This revised museum-and-park pair is a separately checked candidate; no live success is claimed. A conversational or autonomous planning agent is not implemented.
+A user or browser-capable agent can operate the public interface at https://lost-dutchmans-compass.onrender.com, subject to the current readiness indicator and separately authorized live-call allowance. Desktop returned cards and local interactions were verified on deployed `64fd67a` on October 21, 2026; earlier source also exercised live rank. The first deployed local-resolution pilot (91077a5, October 21 at 04:11 UTC) stopped unresolved with no rank or retry. A second pilot of the museum-and-park pair also stopped unresolved before ranking. Both live causes remain unknown because the older app discarded issue detail. This candidate adds safe diagnostics and explicit confirmation; no live success is claimed. A conversational or autonomous planning agent is not implemented.
 
 1. Set a public destination city and a cultural favorite/category. Recommend places is the primary action. Current scope and mode summaries stay visible; open **Scope, test modes and pilot details** to change secondary options. Access, safety and historical truth require independent evidence.
 2. Submit discovery only within an approved call budget. If `needs_input`, choose the intended provider identity. Otherwise inspect status; never substitute fabricated places on failure or interpret an empty result as proof no place exists.
@@ -25,10 +25,10 @@ Desktop rendering/local interaction evidence belongs to deployed 64fd67a. This n
 ## New local-shortlist contract
 
 - Use Mesa, then explicitly click **Resolve two local places · up to 4 calls**. Only the named museum and regional park are resolved; arbitrary provider queries cannot be supplied.
-- Verify a matched ready state before clicking **Rank matched local places · up to 7 calls**. A failure, ambiguity or mismatched identity stops with no automatic retry. A sole candidate is not a taste comparison.
+- Verify a matched ready state before clicking **Rank matched local places · up to 7 calls**. A failure or mismatched identity stops with no automatic retry. When only the second place is ambiguous and exactly one candidate matches all fixed catalogue identity facts, **Confirm exact identity · up to 1 call** offers a separate, one-use identity verification; it never auto-selects or auto-ranks. A sole candidate is not a taste comparison.
 - Resolution IDs are stored only in session-owned, 15-minute server memory. No provider mapping or response-derived fixture is bundled in the public source.
 - Ranked cards automatically use the reviewed local scope; returned name/address changes fail closed. Omitted results remain unranked, and initial catalogue ordering is not misrepresented as prior Qloo ranking.
-- Both actions together reserve at most eleven existing pilot credits. Failure reservations remain charged, and a server restart is not a new authorization. Do not dispatch without a separate bounded verification allowance.
+- Resolution and ranking reserve eleven existing pilot credits. The optional one-dispatch confirmation fits the same twelve-credit ceiling and third submission. Failure reservations remain charged, and a server restart is not a new authorization. Do not dispatch without a separate bounded verification allowance.
 
 
 ## Sponsor guidance behind the explanation

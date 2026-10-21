@@ -11,7 +11,7 @@ const typeMatches=(r,t)=>r.type===t||r.subtype===t||r.type===`urn:entity:${t}`||
 const typeState=(r,t)=>{const values=[r?.type,r?.subtype].filter(v=>v!==undefined);if(values.some(v=>typeof v!=='string'||![t,`urn:entity:${t}`,'urn:entity'].includes(v)))return 'conflict';return values.some(v=>v===t||v===`urn:entity:${t}`)?'match':'missing';};
 const interpretedIdentity=(row,interpretation,t)=>validEntity(row)&&validId(interpretation?.entityId)&&row.entity_id.toLowerCase()===interpretation.entityId.toLowerCase()&&typeState(interpretation,t)==='match';
 const hash=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
-export const validBrief=b=>!(!b||typeof b!=='object'||!['movie','artist','book','tv_show'].includes(b.type)||typeof b.favorite!=='string'||b.favorite.trim().length<2||b.favorite.length>100||typeof b.destination!=='string'||b.destination.trim().length<2||b.destination.length>80||typeof b.verifiedOnly!=='boolean'||!['qloo','without-qloo','test-failure'].includes(b.mode)||(b.seedId!==undefined&&!validId(b.seedId))||(b.action!==undefined&&!['discover','rank','catalogue','resolve-catalogue'].includes(b.action))||(['rank','catalogue','resolve-catalogue'].includes(b.action)&&b.mode!=='qloo'));
+export const validBrief=b=>!(!b||typeof b!=='object'||!['movie','artist','book','tv_show'].includes(b.type)||typeof b.favorite!=='string'||b.favorite.trim().length<2||b.favorite.length>100||typeof b.destination!=='string'||b.destination.trim().length<2||b.destination.length>80||typeof b.verifiedOnly!=='boolean'||!['qloo','without-qloo','test-failure'].includes(b.mode)||(b.seedId!==undefined&&!validId(b.seedId))||(b.action!==undefined&&!['discover','rank','catalogue','resolve-catalogue','confirm-catalogue'].includes(b.action))||(['rank','catalogue','resolve-catalogue','confirm-catalogue'].includes(b.action)&&b.mode!=='qloo'));
 export function boundedProviderDetail(value,depth=0,budget={left:100}){
  if(budget.left--<=0||depth>4)return '[detail omitted]';
  if(value===null||typeof value==='boolean'||typeof value==='number'&&Number.isFinite(value))return value;
@@ -31,7 +31,7 @@ export async function recommend(b,{key,signal,rankContext,run=runHarness}={}){
  const reply=(code,message,extra={},status=200)=>({status,body:redact({requestId,code,message,cards:[],audit,...extra})});
  if(!validBrief(b))return reply('input','Enter a public city, favorite and supported category.',{workflowState:'needs_input'},400);
  const isCatalogue=b.action==='catalogue',isRank=b.action==='rank'||isCatalogue;
- if(b.action!==undefined&&!['discover','rank','catalogue','resolve-catalogue'].includes(b.action))return reply('input','Unknown workflow action.',{},400);
+ if(b.action!==undefined&&!['discover','rank','catalogue','resolve-catalogue','confirm-catalogue'].includes(b.action))return reply('input','Unknown workflow action.',{},400);
  if(isRank&&(!rankContext||b.mode!=='qloo'))return reply('candidate_set','Start with a current discovery result before reranking.',{workflowState:'needs_input'},422);
  const brief={destination:b.destination.trim(),favorite:b.favorite.trim(),type:b.type,verifiedOnly:b.verifiedOnly};
  if(b.mode==='without-qloo')return reply('generator_not_configured','Without Qloo: the same-model comparison is not configured. No provider calls were made.',{workflowState:'degraded'},503);

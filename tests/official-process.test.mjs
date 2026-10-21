@@ -24,3 +24,11 @@ test('actual official describe resolves two fixed catalogue identities with type
  const out=await resolveCatalogue({destination:'Mesa'},{key:'OFFLINE',run:runCatalogue});
  assert.equal(out.status,200,JSON.stringify(out));assert.equal(out.body.audit.workflowExecutions,2);assert.equal(out.body.audit.networkDispatches,4);assert.equal(out.body.privateCatalogueContext.cards.length,2);assert.equal(out.body.privateCatalogueContext.cards[0].access,'unknown');assert.equal(out.body.cards.length,0);
 });
+test('actual official ambiguity exposes exact candidate evidence; explicit UUID confirmation rechecks selected outcome in one guarded dispatch',async()=>{
+ const {resolveCatalogue,confirmCatalogue,resolutionDiagnostic}=await import('../server/catalogue-pool.mjs');
+ const ambiguityFixture=fileURLToPath(new URL('./fixture-catalogue-ambiguity-fetch.mjs',import.meta.url));
+ const run=(operation,input,options={})=>runHarness(operation,input,{...options,key:'OFFLINE-TEST-NOT-A-CREDENTIAL',execute:(command,args,opts)=>executeProcess(command,['--import',ambiguityFixture,...args],opts)});
+ const out=await resolveCatalogue({destination:'Mesa'},{key:'OFFLINE',run});assert.equal(out.body.code,'catalogue_choice',JSON.stringify(out));assert.equal(out.body.audit.networkDispatches,3);assert.equal(out.body.resolutionProgress.workflowStatus,'needs_input');assert.equal(out.body.resolutionProgress.issueKind,'ambiguous');assert.equal(out.body.resolutionProgress.candidateCount,2);assert.equal(out.body.privateCatalogueContext,undefined);
+ const confirmed=await confirmCatalogue({destination:'Mesa'},{key:'OFFLINE',run,choiceContext:out.body.privateCatalogueChoice});assert.equal(confirmed.body.code,'catalogue_resolved',JSON.stringify(confirmed));assert.equal(confirmed.body.audit.networkDispatches,1);assert.equal(confirmed.body.privateCatalogueContext.cards.length,2);
+ const absent=await run('describe',{entity:'Synthetic missing place',type:'place'});assert.equal(absent.dispatches,1);assert.equal(resolutionDiagnostic(absent.data,{name:'Synthetic missing place'}).reason,'no_match');
+});

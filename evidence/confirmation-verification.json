@@ -1,0 +1,14 @@
+{
+  "verifiedAtUtc": "2026-10-21T04:30:10Z",
+  "baselineCommit": "f7a9cd007b776fe3aa351678b47af8472b87cd73",
+  "baselineTree": "4af368c5fd7412807ff07c1eee8f4ff5a2c3850b",
+  "priorLivePilots": {"count": 2, "observedDispatchesCombined": 6, "reservedCreditsCombined": 8, "preciseFailureCause": "unknown; old app did not retain official issue detail", "noRankingOrAutomaticRetry": true},
+  "offlineDiagnosis": {"transport": "synthetic in-memory provider fixture through installed official CLI", "uniqueExactNameDispatches": 2, "ambiguousNameDispatches": 1, "notFoundNameDispatches": 1, "selectedUuidDispatches": 1, "selectedAddressSource": "bound resolution.outcomes[].selected.address; compact UUID result omits properties", "liveFailureReclassification": false},
+  "tests": {"command": "npm test", "total": 87, "passed": 87, "failed": 0, "officialInstalledProcessTests": 7},
+  "guards": ["only one exact catalogue-name/full-address/place-type candidate for the second place can offer confirmation", "explicit one-use owner-bound expiring token; no client-supplied provider ID", "confirmation UUID predicate matches official identifier lookup", "hard one-dispatch confirmation guard", "result, interpretation and selected-outcome identity/type/name/address validation", "new-resolution generation invalidates late or stale outputs", "uncertain termination circuit breaker survives superseded response rewriting", "no partial usable pool", "no automatic selection, retry, substitution or rank"],
+  "reservations": {"initialResolution": 4, "optionalConfirmation": 1, "ranking": 7, "unchangedCeiling": 12, "defaultSubmissions": 3, "failuresRefunded": false},
+  "independentRuntimeReview": "No blocking issue after type-conflict and stale-generation hardening; focused tests rerun independently.",
+  "packageLockUnchanged": true,
+  "newLiveProviderCalls": 0,
+  "unverified": ["new diagnostic outcome on live provider", "live explicit identity confirmation", "deployed browser and mobile behavior of new branch", "two-choice ranking and audience benefit", "unrestricted judging access"]
+}

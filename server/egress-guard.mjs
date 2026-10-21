@@ -14,4 +14,4 @@ export function guardedFetch(fetcher,{maxCalls=2,timeoutMs=7000,onDispatch=()=>{
   return result;
  };
 }
-if(process.env.COMPASS_EGRESS_GUARD==='1')globalThis.fetch=guardedFetch(globalThis.fetch.bind(globalThis),{maxCalls:process.env.COMPASS_WORKFLOW_BUDGET==='5'?5:2,onDispatch:count=>process.stderr.write(`COMPASS_EGRESS:${count}\n`)});
+if(process.env.COMPASS_EGRESS_GUARD==='1')globalThis.fetch=guardedFetch(globalThis.fetch.bind(globalThis),{maxCalls:process.env.COMPASS_WORKFLOW_BUDGET==='1'?1:process.env.COMPASS_WORKFLOW_BUDGET==='5'?5:2,onDispatch:count=>process.stderr.write(`COMPASS_EGRESS:${count}\n`)});
