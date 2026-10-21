@@ -1,0 +1,14 @@
+{
+  "verifiedAtUtc": "2026-10-21T04:06:00Z",
+  "baselineCommit": "64fd67a250c5ba882d2222caca2cc7b99d6174ad",
+  "baselineTree": "3584cab618427f154724b790114f9361abdaa9b0",
+  "tests": {"command": "npm test", "total": 71, "passed": 71, "failed": 0, "officialInstalledProcessTests": 6},
+  "officialPackage": {"version": "0.1.26", "restore": "npm ci --ignore-scripts --no-audit --no-fund", "lockfileUnchanged": true, "providerTransport": "injected no-network fixtures"},
+  "additionalChecks": ["git diff --check", "node --check public/app.mjs", "node --check server/index.mjs", "node --check server/workflow.mjs", "node --check server/catalogue-pool.mjs"],
+  "independentSourceReview": {"initialFindings": 3, "corrected": 3, "remainingBlockingFindings": 0, "scope": "session ownership/expiry, exact identity binding, private-context stripping, budget and failure accounting, browser handler states", "oneVisibleCardRegression": "corrected with matching synthetic ID and independently sourced catalogue facts"},
+  "liveProviderCalls": 0,
+  "secretAccess": false,
+  "publication": "not performed",
+  "unverified": ["new flow deployed browser rendering", "new flow live Qloo compatibility", "mobile layout", "audience usefulness", "same-model quality advantage", "unrestricted judging access"],
+  "compliance": "Current-tree response-derived fixtures and static Qloo mapping removed; historical commits are unchanged. Official-site catalogue facts remain."
+}

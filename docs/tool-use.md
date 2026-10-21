@@ -1,11 +1,11 @@
 # Supported browser workflow
 
-A user or browser-capable agent can operate the public interface at https://lost-dutchmans-compass.onrender.com, subject to the current readiness indicator and separately authorized live-call allowance. Live describe, recommend and rank were verified on the earlier deployed `4866c19` build; the personalized-card build `592fbcec` was deployed and passed no-call browser checks. A conversational or autonomous planning agent is not implemented.
+A user or browser-capable agent can operate the public interface at https://lost-dutchmans-compass.onrender.com, subject to the current readiness indicator and separately authorized live-call allowance. Desktop returned cards and local interactions were verified on deployed `64fd67a` on October 21, 2026; earlier source also exercised live rank. This candidate’s session-resolved shortlist has passed offline tests but is not yet deployed or live-verified. A conversational or autonomous planning agent is not implemented.
 
 1. Set a public destination city and a cultural favorite/category. Recommend places is the primary action. Current scope and mode summaries stay visible; open **Scope, test modes and pilot details** to change secondary options. Access, safety and historical truth require independent evidence.
 2. Submit discovery only within an approved call budget. If `needs_input`, choose the intended provider identity. Otherwise inspect status; never substitute fabricated places on failure or interpret an empty result as proof no place exists.
 3. Read the **resolved favorite and destination heading**: the actual resolved favorite, category and completed request’s destination. This is Compass’s query summary, not a Qloo causal explanation or personality inference. Rank reuses geography from earlier discovery; it does not recheck location.
-4. Inspect returned place cards, addresses, raw affinity and provider positions. The default local heritage/outdoor filter only retains reviewed catalogue matches; it never adds a recommendation. Open **Place evidence** for entity/type evidence and **Inspect source and request evidence** for the safe trace.
+4. Inspect returned place cards, addresses, raw affinity and provider positions. Broad discovery now defaults to explicitly unscoped results with a suitability warning. The optional local filter retains only session-reviewed catalogue matches; it never adds a recommendation. Open **Place evidence** for entity/type evidence and **Inspect source and request evidence** for the safe trace.
 5. Shortlist, hide or restore locally. These actions make zero provider calls and do not supply a negative taste signal or change Qloo’s order/scores. The suggested next step changes from considering a shortlist to checking the venue’s own current visitor information. Shortlisting is not access verification, a booking or a generated itinerary.
 6. Use **Edit your brief** to return to the favorite field. Changing inputs clears stale results. Explicitly change favorite/category to enable **Rerank retained places with changed taste**, subject to capacity. A shortlist restricts the retained set; otherwise all visible places are used. Changed destination requires fresh discovery.
 7. Inspect official rank output, omitted IDs, prior/current positions and any query-level explanation. Do not compare numerical affinities across requests or infer individual behavior, access or safety. External factual checks are a separate task.
@@ -18,9 +18,18 @@ No keys, raw subprocess diagnostics or full provider response are exposed. User-
 
 ## Evidence and remaining proof
 
-Historical offline fixtures exercised the actual pinned CLI contracts, including seven-dispatch three-place ranking. The readability/layout refresh has 52 passing dependency-free tests, including ten DOM-handler tests and five static layout/contrast contracts; five installed-package subprocess tests were unavailable in the current workspace. Historical test records are dated in `evidence/` and are not a fresh full-suite pass.
+The candidate’s complete offline suite passed 71 tests, including six actual installed official-CLI subprocess tests against an injected no-network provider fixture. The new fixture verifies two fixed place identities using the official types-array compaction contract and four fixture dispatches. These checks do not establish live account compatibility or audience value.
 
-Live API execution and public deployment have been verified separately. The latest card rendering in a real browser, mobile layout, cultural benefit, broader heritage coverage and current safety/access remain unverified. A fair same-model comparison is a separately designed Qloo-evidence ablation; the current Qloo-off readiness response is not such a comparison or a Qloo victory. The limited pilot is not an unrestricted judging service. See [the draft video script and shot list](video-script.md); no rendered or uploaded video is represented by that document.
+Desktop rendering/local interaction evidence belongs to deployed 64fd67a. This new candidate’s browser rendering, mobile layout, cultural benefit and current access remain unverified. A narrated screenshot walkthrough of that earlier deployed revision was rendered; it is not footage of this new flow. Historical reported external browser-agent use is not a reproduced agent run of this candidate. A fair same-model comparison remains a separately designed Qloo-evidence ablation. The limited pilot is not an unrestricted judging service.
+
+## New local-shortlist contract
+
+- Use Mesa, then explicitly click **Resolve two local places · up to 4 calls**. Only the two named museums are resolved; arbitrary provider queries cannot be supplied.
+- Verify a matched ready state before clicking **Rank matched local places · up to 7 calls**. A failure, ambiguity or mismatched identity stops with no automatic retry. A sole candidate is not a taste comparison.
+- Resolution IDs are stored only in session-owned, 15-minute server memory. No provider mapping or response-derived fixture is bundled in the public source.
+- Ranked cards automatically use the reviewed local scope; returned name/address changes fail closed. Omitted results remain unranked, and initial catalogue ordering is not misrepresented as prior Qloo ranking.
+- Both actions together reserve at most eleven existing pilot credits. Failure reservations remain charged, and a server restart is not a new authorization. Do not dispatch without a separate bounded verification allowance.
+
 
 ## Sponsor guidance behind the explanation
 

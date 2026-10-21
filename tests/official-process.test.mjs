@@ -17,3 +17,10 @@ test('actual official types-array compaction preserves describe identity via int
  const r=await recommend({destination:'Mesa',favorite:'Arrival',type:'movie',mode:'qloo',verifiedOnly:false},{key:'OFFLINE',run:runTypes});assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.cards.length,1);assert.equal(r.body.audit.networkDispatches,4);assert.equal(r.body.cards[0].typeEvidence,'official workflow target constraint; entity type omitted by harness');
  const rankContext={requestId:r.body.requestId,cards:r.body.cards};const ranked=await recommend({destination:'Mesa',favorite:'Arrival',type:'movie',mode:'qloo',verifiedOnly:false,action:'rank'},{key:'OFFLINE',run:runTypes,rankContext});assert.equal(ranked.status,200,JSON.stringify(ranked));assert.equal(ranked.body.cards[0].entityId,r.body.cards[0].entityId);assert.equal(ranked.body.audit.networkDispatches,5);
 });
+test('actual official describe resolves two fixed catalogue identities with types-only fixtures in four dispatches',async()=>{
+ const {resolveCatalogue}=await import('../server/catalogue-pool.mjs');
+ const catalogueFixture=fileURLToPath(new URL('./fixture-catalogue-fetch.mjs',import.meta.url));
+ const runCatalogue=(operation,input)=>runHarness(operation,input,{key:'OFFLINE-TEST-NOT-A-CREDENTIAL',execute:(command,args,opts)=>executeProcess(command,['--import',catalogueFixture,...args],opts)});
+ const out=await resolveCatalogue({destination:'Mesa'},{key:'OFFLINE',run:runCatalogue});
+ assert.equal(out.status,200,JSON.stringify(out));assert.equal(out.body.audit.workflowExecutions,2);assert.equal(out.body.audit.networkDispatches,4);assert.equal(out.body.privateCatalogueContext.cards.length,2);assert.equal(out.body.privateCatalogueContext.cards[0].access,'unknown');assert.equal(out.body.cards.length,0);
+});

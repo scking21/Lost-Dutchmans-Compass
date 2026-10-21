@@ -1,3 +1,4 @@
+import {resolveCatalogue,createCatalogueSessions} from './catalogue-pool.mjs';
 import {createCandidateSets} from './candidate-sets.mjs';
 import http from 'node:http';import {readFile,readdir} from 'node:fs/promises';import {fileURLToPath,pathToFileURL} from 'node:url';import {createHash,randomUUID} from 'node:crypto';import {recommend,validBrief} from './workflow.mjs';
 const publicRoot=new URL('../public/',import.meta.url),assets=new Map();
@@ -5,8 +6,8 @@ async function load(path=''){for(const f of await readdir(new URL(path,publicRoo
 await load();
 const security={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"};
 const json=(data,status=200)=>Response.json(data,{status,headers:security});
-export function createApp({env=process.env,workflow=recommend,now=()=>Date.now()}={}){
- let active=0,liveRuns=0,reservedDispatches=0,terminationUncertain=false;const candidateSets=createCandidateSets(now);const rate=new Map();const maxLiveRuns=Number(env.MAX_LIVE_RUNS||3);
+export function createApp({env=process.env,workflow=recommend,catalogueResolver=resolveCatalogue,now=()=>Date.now()}={}){
+ let active=0,liveRuns=0,reservedDispatches=0,terminationUncertain=false;const candidateSets=createCandidateSets(now),catalogueSessions=createCatalogueSessions(now);const rate=new Map();const maxLiveRuns=Number(env.MAX_LIVE_RUNS||3);
  if(!Number.isInteger(maxLiveRuns)||maxLiveRuns<1||maxLiveRuns>1000)throw Error('Invalid MAX_LIVE_RUNS');
  return async(request,remoteAddress='shared')=>{
   const u=new URL(request.url);
@@ -20,7 +21,9 @@ export function createApp({env=process.env,workflow=recommend,now=()=>Date.now()
    if(!validBrief(body))return json({code:'input',message:'Enter a valid public city and favorite. No pilot credits were reserved.',cards:[]},400);
    const session=request.headers.get('cookie')?.match(/(?:^|;\s*)compass_session=([0-9a-f-]{36})(?:;|$)/)?.[1]||randomUUID();
    let rankContext;if(body?.action==='rank'){try{rankContext=candidateSets.resolve(body,session);}catch(e){return json({code:'candidate_set',message:e.message,cards:[],workflowState:'needs_input'},422);}}
-   const reservation=body?.action==='rank'?7:4;
+   if(body?.action==='catalogue'){try{rankContext=catalogueSessions.resolve(body,session);}catch(e){return json({code:'catalogue_not_ready',message:e.message,cards:[],workflowState:'needs_input'},422);}}
+   if(body.action==='resolve-catalogue'&&body.destination.trim().toLowerCase()!=='mesa')return json({code:'catalogue_region',message:'Local resolution supports Mesa only. No pilot credits reserved.',cards:[]},422);
+   const reservation=['rank','catalogue'].includes(body?.action)?7:4;
    const live=body?.mode==='qloo'&&!!env.QLOO_API_KEY;
    if(live){
     const time=now();for(const [k,v]of rate)if(time-v.start>=60000)rate.delete(k);
@@ -30,7 +33,7 @@ export function createApp({env=process.env,workflow=recommend,now=()=>Date.now()
     if(terminationUncertain||bucket.count>=4||active>=2||liveRuns>=maxLiveRuns||reservedDispatches+reservation>12)return json({code:'budget',message:'The pilot request budget or concurrency limit has been reached. No harness workflow was started.',cards:[]},429);
     bucket.count++;liveRuns++;reservedDispatches+=reservation;active++;
    }
-   try{const result=await workflow(body,{key:env.QLOO_API_KEY,signal:request.signal,rankContext});const setId=candidateSets.remember(result.body,session);if(setId)result.body.candidateSetId=setId;result.body.pilotBudget={reservedForSubmission:live?reservation:0,reservedThisProcess:reservedDispatches,totalCeiling:12,remaining:12-reservedDispatches,note:'Conservative upper-bound reservations, not a report of actual provider dispatches. Failed/cancelled runs are not refunded.'};if(result.body.code==='process_termination_unknown')terminationUncertain=true;const response=json(result.body,result.status);if(setId)response.headers.set('set-cookie',`compass_session=${session}; Path=/; HttpOnly; SameSite=Strict; Max-Age=900${u.protocol==='https:'?'; Secure':''}`);return response;}catch{return json({code:'internal_error',message:'The request could not finish safely.',cards:[]},500);}finally{if(live)active--;}
+   try{const result=await (body.action==='resolve-catalogue'?catalogueResolver:workflow)(body,{key:env.QLOO_API_KEY,signal:request.signal,rankContext});let catalogueSetId;if(result.body.privateCatalogueContext){catalogueSetId=catalogueSessions.remember(result.body.privateCatalogueContext,session);delete result.body.privateCatalogueContext;result.body.catalogueSetId=catalogueSetId;}const setId=candidateSets.remember(result.body,session);if(setId)result.body.candidateSetId=setId;result.body.pilotBudget={reservedForSubmission:live?reservation:0,reservedThisProcess:reservedDispatches,totalCeiling:12,remaining:12-reservedDispatches,note:'Conservative upper-bound reservations, not a report of actual provider dispatches. Failed/cancelled runs are not refunded.'};if(result.body.code==='process_termination_unknown')terminationUncertain=true;const response=json(result.body,result.status);if(setId||catalogueSetId)response.headers.set('set-cookie',`compass_session=${session}; Path=/; HttpOnly; SameSite=Strict; Max-Age=900${u.protocol==='https:'?'; Secure':''}`);return response;}catch{return json({code:'internal_error',message:'The request could not finish safely.',cards:[]},500);}finally{if(live)active--;}
   }
   if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405,headers:security});
   const path=u.pathname==='/'?'/index.html':u.pathname==='/fixture/'?'/fixture/index.html':u.pathname;

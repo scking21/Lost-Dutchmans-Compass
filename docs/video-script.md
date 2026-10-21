@@ -1,6 +1,6 @@
 # Compass walkthrough: draft narration and shot list
 
-Status: updated draft for the personalized discovery-card and readability/layout interface, 2026-10-21. No existing Qloo video artifact was located in this project. This document does not represent an edited, rendered, uploaded or submitted video. Target length: about 90 seconds; an editorial target, not an event requirement.
+Status: historical discovery narration, updated October 21, 2026. A narrated screenshot walkthrough of deployed 64fd67a was rendered and technically verified. It does not show this candidate’s new session-resolved shortlist flow. Any new footage must be labelled with its exact deployed revision; this document authorizes no provider calls, upload or submission.
 
 ## Narration
 
@@ -18,7 +18,7 @@ Status: updated draft for the personalized discovery-card and readability/layout
 
 ## Shot list
 
-1. **0–12 seconds: goal and inputs.** Show the compact introduction, public destination and favorite/category fields, visible scope and access notices, and Recommend places action. Show the readiness indicator accurately. Do not imply the default Phoenix/Arrival values have produced results.
+1. **0–12 seconds: goal and inputs.** Show the compact introduction, public destination and favorite/category fields, visible scope and access notices, and Recommend places action. Show the readiness indicator accurately. Do not imply the default Mesa/Arrival values have produced results.
 2. **12–25 seconds: resolve and confirm.** Show an actual returned match if ambiguity is available in approved footage; otherwise keep this as a narrated capability. Never manufacture a live disambiguation event.
 3. **25–42 seconds: query context and place card.** Show the resolved favorite/category/destination, provider position, affinity and unknown-access warning. Keep any local scope exclusions visible enough to understand why fewer than three cards remain.
 4. **42–59 seconds: local next step.** Shortlist, hide and restore a returned card. Show the changed next-step text and local count. These controls require no provider call. Do not describe the next-step copy as an AI-generated plan or evidence of the person’s motivation.
@@ -29,7 +29,7 @@ Status: updated draft for the personalized discovery-card and readability/layout
 ## Recording gates
 
 - No provider calls are authorized by this script. Use only already approved footage, or obtain a separate bounded live-recording allowance before a new submission.
-- Real-browser rendering of returned cards and mobile layout for the latest readability/layout build have not been verified. Verify those views before representing them as recorded results. Offline DOM tests are not a visual recording.
+- Returned-card rendering was checked on desktop for deployed 64fd67a; mobile and the new session-resolved shortlist candidate remain unverified. Offline DOM tests are not browser or live-provider evidence.
 - If fixture footage is used, label it visibly as synthetic/offline throughout that segment. The preserved fixture lab is a different interface; do not present it as the new live card UI.
 - Keep secrets, raw diagnostics and browser/session handles out of footage. Prefer the card’s bounded evidence disclosure to an unredacted full response dump.
 - Do not promise a place will appear, an order will change, a venue is open or the experience improves recommendation quality. Live availability and outputs can differ.

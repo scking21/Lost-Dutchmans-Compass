@@ -14,7 +14,7 @@ test('essential controls, consent and access warning precede primary action; opt
  const disclosure=html.slice(options,html.indexOf('</details>',options));
  assert.match(disclosure,/<summary>Scope, test modes and pilot details<\/summary>/);
  for(const id of ['heritage','mode','verified'])assert.match(disclosure,new RegExp(`id="${id}"`));
- assert.match(html,/<input id="heritage" type="checkbox" checked>/);
+ assert.match(html,/<input id="heritage" type="checkbox">/);
  assert.match(html,/<input id="verified" type="checkbox" disabled>/);
  assert.match(html,/<button id="run" type="submit" disabled>Recommend places<\/button>/);
 });
