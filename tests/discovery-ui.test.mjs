@@ -19,7 +19,7 @@ async function mount(response) {
   addEventListener(k,fn){this.listeners[k]=fn;}
   focus(){activeElement=this;}
  }
- for(const id of ['workflow','results','payload','status','badge','run','rerank','choices','seed','destination','favorite','type','verified','mode','heritage','form','readiness'])elements.set(id,new Element('div'));
+ for(const id of ['workflow','results','payload','status','badge','run','rerank','choices','seed','destination','favorite','type','verified','mode','heritage','form','readiness','scope-summary','mode-summary','discovery-options'])elements.set(id,new Element('div'));
  elements.get('destination').value='Mesa';elements.get('favorite').value='Arrival';elements.get('type').value='movie';elements.get('mode').value='qloo';elements.get('choices').hidden=true;
  const panel=new Element('section');
  const document={getElementById:id=>elements.get(id),createElement:tag=>new Element(tag),querySelector:()=>panel,get activeElement(){return activeElement;}};
@@ -34,7 +34,7 @@ const result={mode:'qloo',code:'results',operation:'recommend',workflowState:'ok
 
 test('discovery context uses completed resolved seed and keeps affinity and access visible',async()=>{
  const ui=await mount(result);await ui.submit();const text=ui.elements.get('results').textContent;
- assert.match(text,/Your discovery signal/);assert.match(text,/Arrival \(2016\)/);assert.match(text,/Compass query context/);assert.match(text,/Qloo affinity: 0.7 · not a probability/);assert.match(text,/Access: unknown/);
+ assert.match(text,/Arrival \(2016\) · Mesa/);assert.match(text,/Arrival \(2016\)/);assert.match(text,/Compass query context/);assert.match(text,/Qloo affinity: 0.7 · not a probability/);assert.match(text,/Access: unknown/);
  const details=ui.all().find(e=>e.tagName==='details'&&e.textContent.includes('Place evidence'));assert.ok(details);assert.match(details.textContent,/Qloo entity: place/);
 });
 test('shortlist next step stays local, preserves focus and provider position',async()=>{
@@ -64,5 +64,12 @@ test('rank context uses prior discovery geography without claiming a new locatio
  const ui=await mount({...result,operation:'rank'});await ui.submit();assert.match(ui.elements.get('results').textContent,/Qloo reranked retained places; location comes from earlier discovery around Mesa/);
 });
 test('restoring a place excluded by scope returns focus to the scope control',async()=>{
- const ui=await mount(result);await ui.submit();ui.click('Hide locally · no taste signal');ui.elements.get('heritage').checked=true;ui.elements.get('heritage').listeners.change();ui.click('Restore locally');assert.equal(ui.document.activeElement,ui.elements.get('heritage'));assert.equal(ui.all().filter(e=>e.className==='card').length,0);
+ const ui=await mount(result);await ui.submit();ui.click('Hide locally · no taste signal');ui.elements.get('heritage').checked=true;ui.elements.get('heritage').listeners.change();ui.click('Restore locally');assert.equal(ui.document.activeElement,ui.elements.get('heritage'));assert.equal(ui.elements.get('discovery-options').open,true);assert.equal(ui.all().filter(e=>e.className==='card').length,0);
+});
+
+test('visible option summaries track scope and no-call modes',async()=>{
+ const ui=await mount(result);ui.elements.get('heritage').checked=true;ui.elements.get('heritage').listeners.change();assert.match(ui.elements.get('scope-summary').textContent,/scope is on/);
+ ui.elements.get('heritage').checked=false;ui.elements.get('heritage').listeners.change();assert.match(ui.elements.get('scope-summary').textContent,/Broad provider results/);
+ for(const [mode,copy] of [['test-failure',/No provider call/],['without-qloo',/no generator/],['qloo',/Qloo taste-led discovery selected/]]){ui.elements.get('mode').value=mode;ui.elements.get('mode').listeners.change();assert.match(ui.elements.get('mode-summary').textContent,copy);}
+ assert.equal(ui.calls.filter(c=>c.url==='/api/recommend').length,0);
 });

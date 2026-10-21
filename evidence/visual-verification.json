@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-21",
+  "baselineCommit": "5439a948d399ec735928e4258e0d3cde7bfbec9f",
+  "baselineTree": "4f1320576db08fa14d3987e162d3c12954a6632e",
+  "baselineVerification": "git write-tree matched published tree; no unstaged changes before edits",
+  "dependencyFreeTests": {
+    "total": 52,
+    "passed": 52,
+    "failed": 0,
+    "command": "node --test $(find tests -maxdepth 1 -name '*.test.mjs' ! -name 'official-process.test.mjs' | sort)"
+  },
+  "unrunTests": {
+    "count": 5,
+    "file": "tests/official-process.test.mjs",
+    "reason": "Pinned harness dependency unavailable; no install attempted"
+  },
+  "providerCalls": 0,
+  "browserVerification": "Rendered candidate predeployment not performed: local preview unreachable from supported cloud browser. Public deployed-app desktop verification is pending. Source/layout/DOM tests do not establish rendered layout or keyboard behavior.",
+  "fonts": "Existing Georgia/Arial only; no downloads",
+  "serverPolicyAndBudgetFiles": "Unchanged",
+  "publication": "Candidate only; no commit, push or deployment performed by implementation worker",
+  "controlBorderReview": {
+    "color": "#758A7F",
+    "ivoryInteriorContrast": 3.6231,
+    "sageExteriorContrast": 3.0859,
+    "reason": "Independent review identified that proposed #7A8F84 passed on input interiors but not outer sage; darkened border and tested both adjacent surfaces."
+  }
+}

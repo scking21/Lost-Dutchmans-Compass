@@ -6,8 +6,14 @@ let version=0,controller,refinement=null,lastResponse=null,retained=null,capacit
 const panel=document.querySelector('.result-panel');
 function invalidate(clearChoice=true){refinement=null;lastResponse=null;$('workflow').textContent='REFINE BRIEF → SUBMIT AGAIN';version++;controller?.abort();controller=null;pending=false;$('results').replaceChildren();$('payload').textContent='Inputs changed. Submit to retrieve new evidence.';$('status').textContent='Ready for your updated brief.';$('badge').textContent='NO CURRENT RESULTS';$('run').disabled=false;panel.setAttribute('aria-busy','false');if(clearChoice){$('choices').hidden=true;$('seed').replaceChildren();}updateRank();}
 for(const id of ['destination','favorite','type','verified','mode'])$(id).addEventListener('input',()=>{invalidate();if(['destination','verified','mode'].includes(id))retained=null;updateRank();});
-$('heritage').addEventListener('change',()=>{if(refinement&&lastResponse)renderResults();else{retained=null;updateRank();}});
+$('heritage').addEventListener('change',()=>{updateOptionSummary();if(refinement&&lastResponse)renderResults();else{retained=null;updateRank();}});
 $('seed').addEventListener('change',()=>invalidate(false));
+function updateOptionSummary(){
+ $('scope-summary').textContent=$('heritage').checked?'Local heritage/outdoor scope is on. Only reviewed catalogue matches remain; this does not verify access.':'Broad provider results selected. Places may be residential, unrelated to heritage, or unsuitable for visiting. Access remains unknown.';
+ $('mode-summary').textContent=$('mode').value==='qloo'?'Qloo taste-led discovery selected.':$('mode').value==='test-failure'?'Controlled failure selected. No provider call or live recommendations.':'Without Qloo selected. Comparison readiness only; no generator or live recommendations.';
+}
+$('mode').addEventListener('change',updateOptionSummary);
+updateOptionSummary();
 function node(tag,text){const e=document.createElement(tag);e.textContent=text;return e;}
 $('form').addEventListener('submit',async event=>{
  event.preventDefault();const action=event.submitter?.id==='rerank'?'rank':'discover';if($('mode').value==='qloo'&&!canStartLive({configured:keyConfigured,credits:capacity,runs:runsRemaining},action==='rank'?7:4)){updateRank();return;}pending=true;const retainedForRun=retained;controller?.abort();const mine=++version;controller=new AbortController();const activeController=controller;const signal=activeController.signal;
@@ -36,7 +42,7 @@ function renderResults(focusId=null,focusAction=null){
  const rawState=refinement.snapshot();const domain=applyDomainScope(rawState.cards);const state=$('heritage').checked?{...rawState,cards:domain.cards,shortlistedIds:rawState.shortlistedIds.filter(id=>domain.cards.some(c=>c.entityId===id)),excludedIds:[...new Set([...rawState.excludedIds,...domain.excluded.map(c=>c.entityId)])]}:rawState;$('results').replaceChildren();
  if(lastResponse.cards?.length&&lastResponse.mode==='qloo'&&lastResponse.seed?.name){
   const context=node('section','');context.className='discovery-context';context.setAttribute('aria-label','Your discovery signal');
-  context.append(node('h3','Your discovery signal'),node('p',`Resolved favorite: ${lastResponse.seed.name} · ${lastResponse.brief.type}. ${lastResponse.operation==='rank'?'Qloo reranked retained places; location comes from earlier discovery':'Qloo discovery used a location filter'} around ${lastResponse.brief.destination}.`),node('p','Compass query context, not a causal explanation of your taste. Qloo supplies the returned places, order and affinity; shortlist choices stay local to this page.'));
+  context.append(node('h3',`${lastResponse.seed.name} · ${lastResponse.brief.destination}`),node('p',`Resolved favorite: ${lastResponse.seed.name} · ${lastResponse.brief.type}. ${lastResponse.operation==='rank'?'Qloo reranked retained places; location comes from earlier discovery':'Qloo discovery used a location filter'} around ${lastResponse.brief.destination}.`),node('p','Compass query context, not a causal explanation of your taste. Qloo supplies the returned places, order and affinity; shortlist choices stay local to this page.'));
   const edit=node('a','Edit your brief');edit.href='#favorite';context.append(edit);$('results').append(context);
  }
  if(lastResponse.cards?.length&&!state.cards.length)$('results').append(node('p','No places visible under your current local choices. Review the scope exclusions or restore a hidden place below. No replacement places were invented.'));
@@ -54,7 +60,7 @@ function renderResults(focusId=null,focusAction=null){
   if(lastResponse.rankComparison){const change=lastResponse.rankComparison.positions.find(p=>p.entityId===card.entityId);if(change)content.append(node('p',`Provider position: ${change.previousPosition} previously → ${change.currentPosition} now. Different queries; no numeric affinity comparison.`));}
   const selected=state.shortlistedIds.includes(card.entityId);
   const next=node('div','');next.className='next-step';next.append(node('h4','Suggested next step'),node('p',selected?'Check the venue’s own current opening hours, visitor permission and access requirements before planning a visit. Shortlisting is not verification.':'Interested? Shortlist this place to compare locally, then check the venue’s own visitor information before planning a visit.'));content.append(next);
-  if(card.website){const link=node('a','Visit provider-listed website ↗');link.href=card.website;link.target='_blank';link.rel='noopener noreferrer';content.append(link);}
+  if(card.website){const link=node('a','Visit provider-listed website (opens a new tab)');link.href=card.website;link.target='_blank';link.rel='noopener noreferrer';content.append(link);}
   const actions=node('div','');actions.className='card-actions';
   const shortlist=node('button',selected?'Remove from shortlist':'Shortlist this place');shortlist.type='button';shortlist.setAttribute('aria-pressed',String(selected));shortlist.setAttribute('aria-label',`${shortlist.textContent}: ${card.name}`);
   shortlist.addEventListener('click',()=>{refinement.toggleShortlist(card.entityId);renderResults(card.entityId,'shortlist');});
@@ -65,7 +71,7 @@ function renderResults(focusId=null,focusAction=null){
   article.append(number,content);$('results').append(article);
  }
  for(const card of state.excluded){const row=node('div','');row.className='local-excluded';row.append(node('p',`Hidden locally by you: ${card.name} · original provider position ${card.resultPosition}`));const restore=node('button','Restore locally');restore.type='button';restore.setAttribute('aria-label',`Restore locally: ${card.name}`);restore.addEventListener('click',()=>{refinement.toggleExcluded(card.entityId);renderResults(card.entityId,'shortlist');});if(focusId===card.entityId&&focusAction==='restore')nextFocus=restore;row.append(restore);$('results').append(row);}
- if(focusId)(nextFocus||$('heritage')).focus();
+ if(focusId){if(!nextFocus)$('discovery-options').open=true;(nextFocus||$('heritage')).focus();}
  if(lastResponse.candidateSetId)retained={response:lastResponse,state};updateRank();
  $('payload').textContent=JSON.stringify({...lastResponse,localDomainScope:{enabled:$('heritage').checked,...domain},localRefinement:{source:state.source,shortlistedIds:state.shortlistedIds,excludedIds:state.excludedIds,providerOrderUnchanged:true,additionalProviderCalls:0}},null,2);
 }
