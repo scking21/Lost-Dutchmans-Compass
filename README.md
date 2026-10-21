@@ -1,10 +1,12 @@
 # Lost Dutchman's Compass
 
-An interactive taste-to-place web app using the **official @qloo/qloo-harness 0.1.26 CLI workflow runtime**. Enter a film, music artist, book or TV show and a public destination; clarify ambiguous matches; discover Qloo places; then shortlist, exclude or restore returned places locally.
+An interactive taste-to-place web app using the **official @qloo/qloo-harness 0.1.26 CLI workflow runtime**. Enter a film, music artist, book or TV show and a public destination; clarify ambiguous matches; then explore cards for places returned by Qloo. The result panel shows your resolved favorite, category and destination context. Cards retain Qloo’s order and affinity, while local shortlist choices change the suggested next step and expandable evidence keeps the source inspectable.
+
+Personalization here means the chosen cultural signal drives the Qloo request, and local shortlist state guides the next-step copy. It does not infer a personality, customize fonts or colors from taste, or claim a unique causal reason for each place. See [the draft video script and shot list](docs/video-script.md) for the matching walkthrough.
 
 Public source destination: https://github.com/scking21/Lost-Dutchmans-Compass
 
-The official-harness Node app is deployed on Render Free at https://lost-dutchmans-compass.onrender.com. Deployed source4866c19 passed live describe, recommend and rank on2026-10-20. The local visitor-scope/capacity-UI changes in this source snapshot have passed offline tests and still require independent review and deployment verification. The earlier private Sites prototype is not this public official-harness demo.
+The official-harness Node app is deployed on Render Free at https://lost-dutchmans-compass.onrender.com. Deployment of source `592fbcec602357d2635722da3f7394b1874c50f6`, including the personalized discovery cards, was verified on 2026-10-21. No-call browser checks passed; actual new-card rendering in a real browser and mobile layout remain unverified. Earlier source `4866c19` passed live describe, recommend and rank on 2026-10-20. Those earlier provider results do not constitute a new live test of the card update. This explanation-only revision is a local candidate until separately published and deployed. The earlier private Sites prototype is not this public official-harness demo.
 
 ## Official source integration
 
@@ -52,11 +54,12 @@ There is no model provider configured. Qloo-off makes zero workflow/provider cal
 
 ## Testing distinction
 
-The direct Node test suite currently contains42 passing tests:
-- Five run the **actual installed official CLI subprocess** against an injected, test-only in-memory provider fixture: complete describe→recommend, ambiguity, unresolved favorite, and describe→rank of three retained IDs (seven observed fixture dispatches). These verify real package workflow execution and schemas, **not live account compatibility**.
+The prior full offline run recorded 42 passing tests on 2026-10-20 in `evidence/offline-verification.json`; that record is historical, not the result of the latest UI revision. The current source contains 51 tests. For the discovery-card update, 46 dependency-free offline tests passed, including nine DOM regressions. Five installed-package subprocess checks were unavailable in that workspace because the pinned dependency was not installed; a complete current-suite pass is not claimed.
+
+- Five tests run the **actual installed official CLI subprocess** against an injected, test-only in-memory provider fixture: complete describe→recommend, ambiguity, unresolved favorite, and describe→rank of three retained IDs (seven observed fixture dispatches). These verify real package workflow execution and schemas, **not live account compatibility**.
 - Other tests cover subprocess termination/output bounds, fixed arguments/stdin, egress restrictions, normalized states, validation, budgets, secrets, access uncertainty and local refinement with mocks.
 
-Tests never run `qloo setup`, use a real credential, or contact Qloo/model providers. The earlier4866c19 build has verified Docker deployment, public browser access and live official-harness workflows. These tests do not establish that the newer local-scope UI has been deployed or browser-verified.
+Tests never run `qloo setup`, use a real credential, or contact Qloo/model providers. Deployment and no-call browser checks for `592fbcec` are distinct from these offline tests. Real-browser rendering of returned cards and mobile layout still need verification; fixtures do not establish recommendation quality or current access.
 
 ## Deployment candidate
 
@@ -68,13 +71,13 @@ The UI and Docker assets contain only public app content. The private project-br
 
 Project source is MIT; see LICENSE. Qloo's published package is MIT, Copyright2026Qloo; its complete license and bundled notices are retained in THIRD_PARTY_NOTICES.md and evidence/. Exact package integrity/license hash are in evidence/package-provenance.json and package-lock.json. Do not remove third-party notices from runtime distributions. This does not assert that the separate kit repository has a license or that all event submission rules are already satisfied.
 
-## Unpublished refinement candidate after e6cc6a9
+## Retained-place refinement
 
 Candidate sets are opaque UUID references stored server-side for fifteen minutes and bound to an HttpOnly, SameSite=Strict browser cookie (Secure on HTTPS). They retain the original destination and access policy but permit an explicitly changed cultural favorite/category. This is request continuity, not account authentication. They may be reused within expiry and the conservative process budget; they cannot authorize arbitrary provider IDs. Forged, duplicate, oversized or hidden selected IDs fail before dispatch. Browser input changes invalidate any selected seed identity.
 
 Rank receives only option IDs, option_type and the new resolved signal. It does not recheck geography, opening hours, safety or access. Provider omissions remain unranked, not negative judgments. Prior/current ordinal positions are shown; numeric affinity scores across different queries are not compared. The bounded returned query-level explainability is shown separately from Compass's query summary, with an explicit absent state. The server does not manufacture per-place causal reasons.
 
-Reservations are upper bounds. Audit networkDispatches counts completed subprocess reports; dispatchCountComplete=false means a failed or cancelled subprocess could have dispatched additional requests. The full reservation remains charged in that case. This is not an autonomous planning agent or live evidence of improved recommendations. See docs/tool-use.md for the planned human/agent-driven browser demonstration.
+Reservations are upper bounds. Audit networkDispatches counts completed subprocess reports; dispatchCountComplete=false means a failed or cancelled subprocess could have dispatched additional requests. The full reservation remains charged in that case. This is not an autonomous planning agent or live evidence of improved recommendations. See [the supported browser workflow](docs/tool-use.md) and [draft video walkthrough](docs/video-script.md).
 
 ## Official compact entity type contract
 
@@ -98,7 +101,7 @@ On2026-10-20 deployed4866c19 resolved Raiders of the Lost Ark and returned three
 
 Historical discovery exposed visitor-domain mismatches. Response-derived result details have been removed from this snapshot; successful API execution alone did not establish heritage usefulness, safe access, autonomous reasoning or comparative quality.
 
-## Personalized discovery cards (2026-10-21 candidate)
+## Personalized discovery cards (deployed 2026-10-21)
 
 The result panel now surfaces the resolved seed and completed query context, with a stable in-page link back to the favorite field. It never derives a personality, design preference, or causal reason from a title. Cards keep provider position, affinity and unknown-access warnings visible, add local shortlist-dependent next steps, and expose technical identity evidence through a native disclosure. Scope exclusions and local hiding never create replacement recommendations. Shortlist/hide/restore preserve keyboard focus; changing the brief removes stale query context while retaining only the baseline-authorized rerank continuity.
 

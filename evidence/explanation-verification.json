@@ -1,0 +1,20 @@
+{
+  "baselineCommit": "592fbcec602357d2635722da3f7394b1874c50f6",
+  "baselineVerification": "All 45 local files matched remote Git blob hashes before editing; main ref matched the baseline.",
+  "completedAtUtc": "2026-10-21T02:31:50Z",
+  "command": "node --test tests/capacity.test.mjs tests/discovery-ui.test.mjs tests/domain.test.mjs tests/policy.test.mjs tests/rank.test.mjs tests/refine.test.mjs tests/type-contract.test.mjs",
+  "tests": 46,
+  "pass": 46,
+  "fail": 0,
+  "unrun": [
+    "Five official-process tests require the absent pinned installed package.",
+    "Real-browser returned-card rendering and mobile layout.",
+    "Video recording/render/upload/submission."
+  ],
+  "additionalChecks": [
+    "node --check public/app.mjs",
+    "git diff --check",
+    "HTML start-tag and attribute sequence identical before/after: text-only edit."
+  ],
+  "scope": "Explanation and video-script documentation update. Runtime JavaScript, CSS, dependency lockfile and server policy unchanged. No provider calls, credentials accessed, dependency installation, publication or deployment."
+}
