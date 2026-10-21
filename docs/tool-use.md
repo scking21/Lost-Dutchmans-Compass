@@ -1,6 +1,6 @@
 # Supported browser workflow
 
-A user or browser-capable agent can operate the public interface at https://lost-dutchmans-compass.onrender.com, subject to the current readiness indicator and separately authorized live-call allowance. Desktop returned cards and local interactions were verified on deployed `64fd67a` on October 21, 2026; earlier source also exercised live rank. This candidate’s session-resolved shortlist has passed offline tests but is not yet deployed or live-verified. A conversational or autonomous planning agent is not implemented.
+A user or browser-capable agent can operate the public interface at https://lost-dutchmans-compass.onrender.com, subject to the current readiness indicator and separately authorized live-call allowance. Desktop returned cards and local interactions were verified on deployed `64fd67a` on October 21, 2026; earlier source also exercised live rank. The first deployed local-resolution pilot (91077a5, October 21 at 04:11 UTC) stopped unresolved with no rank or retry. This revised museum-and-park pair is a separately checked candidate; no live success is claimed. A conversational or autonomous planning agent is not implemented.
 
 1. Set a public destination city and a cultural favorite/category. Recommend places is the primary action. Current scope and mode summaries stay visible; open **Scope, test modes and pilot details** to change secondary options. Access, safety and historical truth require independent evidence.
 2. Submit discovery only within an approved call budget. If `needs_input`, choose the intended provider identity. Otherwise inspect status; never substitute fabricated places on failure or interpret an empty result as proof no place exists.
@@ -18,13 +18,13 @@ No keys, raw subprocess diagnostics or full provider response are exposed. User-
 
 ## Evidence and remaining proof
 
-The candidate’s complete offline suite passed 71 tests, including six actual installed official-CLI subprocess tests against an injected no-network provider fixture. The new fixture verifies two fixed place identities using the official types-array compaction contract and four fixture dispatches. These checks do not establish live account compatibility or audience value.
+The prior candidate’s complete offline suite passed 71 tests, including six actual installed official-CLI subprocess tests against an injected no-network provider fixture. The official-process fixture verifies two fixed place identities using the official types-array compaction contract and four fixture dispatches. These checks do not establish live account compatibility or audience value.
 
 Desktop rendering/local interaction evidence belongs to deployed 64fd67a. This new candidate’s browser rendering, mobile layout, cultural benefit and current access remain unverified. A narrated screenshot walkthrough of that earlier deployed revision was rendered; it is not footage of this new flow. Historical reported external browser-agent use is not a reproduced agent run of this candidate. A fair same-model comparison remains a separately designed Qloo-evidence ablation. The limited pilot is not an unrestricted judging service.
 
 ## New local-shortlist contract
 
-- Use Mesa, then explicitly click **Resolve two local places · up to 4 calls**. Only the two named museums are resolved; arbitrary provider queries cannot be supplied.
+- Use Mesa, then explicitly click **Resolve two local places · up to 4 calls**. Only the named museum and regional park are resolved; arbitrary provider queries cannot be supplied.
 - Verify a matched ready state before clicking **Rank matched local places · up to 7 calls**. A failure, ambiguity or mismatched identity stops with no automatic retry. A sole candidate is not a taste comparison.
 - Resolution IDs are stored only in session-owned, 15-minute server memory. No provider mapping or response-derived fixture is bundled in the public source.
 - Ranked cards automatically use the reviewed local scope; returned name/address changes fail closed. Omitted results remain unranked, and initial catalogue ordering is not misrepresented as prior Qloo ranking.

@@ -3,7 +3,7 @@ import {catalogue} from '../public/catalogue.mjs';
 import {normalizeIdentity} from '../public/domain.mjs';
 import {runHarness,HARNESS_VERSION} from './harness.mjs';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-export const pilotCatalogueIds=Object.freeze(['real-06','real-01']);
+export const pilotCatalogueIds=Object.freeze(['real-06','real-07']);
 export function validateCataloguePlace(row,interpretation,entry){
  if(!row||typeof row.entity_id!=='string'||!uuid.test(row.entity_id)||entry.blocked||!entry.address)return null;
  const scalars=[row.type,row.subtype].filter(v=>v!==undefined);
@@ -27,12 +27,12 @@ export async function resolveCatalogue(b,{key,signal,run=runHarness}={}){
    audit.workflowExecutions++;const result=await run('describe',{entity:entry.name,type:'place'},{key,signal});audit.networkDispatches+=result.dispatches;
    const d=result.data;
    if(d.operation!=='describe'||d.schema_version!=='1.0-preview.1'||!d.execution?.correlation_id)return response('catalogue_schema','Place resolution returned an invalid schema. No ranking was run.',502);
-   if(!['ok','partial','degraded'].includes(d.status)||d.results?.length!==1)return response('catalogue_unresolved','A catalogue place was unresolved or ambiguous. The pilot stopped without retry or ranking.');
+   if(!['ok','partial','degraded'].includes(d.status)||d.results?.length!==1)return response('catalogue_unresolved',`${cards.length} of ${pilotCatalogueIds.length} local identities matched. ${entry.name} was unresolved or ambiguous. Stopped without retry or ranking.`,422,{resolutionProgress:{matchedCount:cards.length,total:pilotCatalogueIds.length,stoppedAtCatalogueName:entry.name,reason:'unresolved_or_ambiguous'}});
    const card=validateCataloguePlace(d.results[0],d.interpretation,entry);
-   if(!card||cards.some(c=>c.entityId.toLowerCase()===card.entityId.toLowerCase()))return response('catalogue_unresolved','A catalogue name, address or place identity could not be confirmed. The pilot stopped without retry or ranking.');
+   if(!card||cards.some(c=>c.entityId.toLowerCase()===card.entityId.toLowerCase()))return response('catalogue_unresolved',`${cards.length} of ${pilotCatalogueIds.length} local identities matched. ${entry.name} did not pass exact name, address and place-identity checks. Stopped without retry or ranking.`,422,{resolutionProgress:{matchedCount:cards.length,total:pilotCatalogueIds.length,stoppedAtCatalogueName:entry.name,reason:'identity_mismatch'}});
    cards.push(card);
   }
-  return response('catalogue_resolved','Two local visitor identities matched the independently sourced catalogue. Rank this fixed shortlist with your favorite; access remains unknown.',200,{resolvedPlaceCount:cards.length,resolvedPlaces:cards.map(c=>catalogue.find(e=>e.id===c.catalogueId).name),privateCatalogueContext:{cards,region:'Mesa–Apache Junction corridor',source:'session-bound official place resolution'}});
+  return response('catalogue_resolved','Two local visitor identities matched the independently sourced catalogue. Rank this fixed shortlist with your favorite; access remains unknown.',200,{resolvedPlaceCount:cards.length,resolvedPlaces:cards.map(c=>catalogue.find(e=>e.id===c.catalogueId).name),privateCatalogueContext:{cards,region:'Mesa area',source:'session-bound official place resolution'}});
  }catch(e){audit.dispatchCountComplete=false;return response(e.code==='process_termination_unknown'?'process_termination_unknown':'catalogue_failed','Place resolution could not finish safely. No automatic retry or ranking was run.',502);}
 }
 export function createCatalogueSessions(now=()=>Date.now()){

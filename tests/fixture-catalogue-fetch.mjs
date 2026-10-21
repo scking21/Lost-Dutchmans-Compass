@@ -1,7 +1,7 @@
 // Test-only fake transport: independently sourced catalogue facts plus invented IDs.
 // Never imported by production code; no external network or credential.
 import {catalogue} from '../public/catalogue.mjs';
-const places=['real-06','real-01'].map((id,i)=>{const e=catalogue.find(c=>c.id===id),n=String(i+1);return {entity_id:`${n.repeat(8)}-${n.repeat(4)}-4${n.repeat(3)}-8${n.repeat(3)}-${n.repeat(12)}`,name:e.name,types:['urn:entity:place'],properties:{address:e.address}};});
+const places=['real-06','real-07'].map((id,i)=>{const e=catalogue.find(c=>c.id===id),n=String(i+1);return {entity_id:`${n.repeat(8)}-${n.repeat(4)}-4${n.repeat(3)}-8${n.repeat(3)}-${n.repeat(12)}`,name:e.name,types:['urn:entity:place'],properties:{address:e.address}};});
 globalThis.fetch=async(input)=>{
  const u=new URL(input instanceof Request?input.url:String(input));
  if(u.origin!=='https://hackathon.api.qloo.com')throw Error('Fixture refuses unknown host');

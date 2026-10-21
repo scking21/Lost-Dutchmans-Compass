@@ -1,0 +1,13 @@
+{
+  "verifiedAtUtc": "2026-10-21T04:14:36Z",
+  "baselineCommit": "91077a582038ca38351c761dc92c0a4874c9c971",
+  "baselineTree": "53af5ff78e231219c73e7144f7d78772a81da901",
+  "priorPilot": {"observedAtUtc": "2026-10-21T04:11:10Z", "outcome": "catalogue_unresolved", "workflows": 2, "observedDispatches": 3, "dispatchCountComplete": true, "reservedCredits": 4, "rankOrRetry": false},
+  "change": "Fixed allowlisted second candidate changed to independently sourced Usery Mountain Regional Park; every identity still requires fresh exact name/full-address/type validation. Partial progress discloses only catalogue labels and counts, with no usable partial pool. New resolution clears previous browser rank handle.",
+  "tests": {"command": "npm test", "total": 74, "passed": 74, "failed": 0, "officialInstalledProcessTests": 6, "independentlyReviewedFocusedTests": 27},
+  "packageLockUnchanged": true,
+  "newLiveProviderCalls": 0,
+  "budgetPolicyChanged": false,
+  "independentSourceReview": "No blocking runtime finding; exact new pair and partial-state behavior reviewed.",
+  "unverified": ["revised pair live identity resolution", "revised pair deployed-browser behavior", "two-choice ranking and audience value", "mobile layout", "unrestricted judging access"]
+}
