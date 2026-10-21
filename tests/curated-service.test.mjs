@@ -16,3 +16,29 @@ test('mismatched place metadata or changed confirmed identity fails closed',asyn
 test('curated backend busy does not execute or consume confirmation and errors pause further requests',async()=>{let release,count=0;const wait=new Promise(r=>release=r),service={preflight:()=>({reservation:1}),execute:async()=>{count++;await wait;return {status:502,body:{code:'provider_rate_limited',retryAfterMs:3600000,cards:[]}};}};const app=createApp({env:{APP_ORIGIN:'http://test',QLOO_API_KEY:'OFFLINE'},curatedService:service});const req=()=>new Request('http://test/api/recommend',{method:'POST',headers:{origin:'http://test','content-type':'application/json'},body:JSON.stringify({...base,action:'curated-confirm'})});const first=app(req());await new Promise(r=>setImmediate(r));const busy=await app(req());assert.equal((await busy.json()).code,'busy');assert.equal(count,1);release();await first;const status=await (await app(new Request('http://test/api/status'))).json();assert.equal(status.liveExecutionAllowed,false);assert.equal(status.activeSubmissions,0);assert.equal((await (await app(req())).json()).code,'budget');assert.equal(count,1);});
 test('verified-only curated requests are rejected before reservation or dispatch',()=>{const s=setup();for(const action of ['curated-place','curated-signal','curated-confirm','curated-rank'])assert.throws(()=>s.service.preflight({...base,action,verifiedOnly:true,catalogueId:'real-06'},'owner'),/verified/i);assert.equal(s.calls.length,0);});
 test('specific conflicting-source warning survives confirmation and ranking for Airbase',async()=>{const s=setup();const a=await confirmed(s,'curated-place',{catalogueId:'real-08'}),b=await confirmed(s,'curated-place',{catalogueId:'real-06'}),t=await confirmed(s,'curated-signal');assert.equal(a.identity.visitWarning,'UNKNOWN_OFFICIAL_PAGES_CONFLICT_RECHECK');const ranked=await s.exec({action:'curated-rank',placeTokens:[a.identityToken,b.identityToken],tasteTokens:[t.identityToken]});assert.equal(ranked.body.cards.find(c=>c.catalogueId==='real-08').visitWarning,'UNKNOWN_OFFICIAL_PAGES_CONFLICT_RECHECK');});
+
+test('unresolved place reports bounded categorical diagnostics without provider identity or payload',async()=>{
+ const row=rows.find(r=>r.catalogueId==='real-03');
+ for(const [change,expected] of [[{properties:{}},'address_missing'],[{properties:{address:'Different address'}},'address_mismatch'],[{name:'Different place'},'name_mismatch'],[{type:'urn:entity:movie'},'type_mismatch']]){
+  const d=describe({...row,...change}),service=createCuratedService({run:async()=>({dispatches:2,data:d})}),b={...base,action:'curated-place',catalogueId:'real-03'};
+  const out=await service.execute(b,{key:'OFFLINE',owner:'owner',context:service.preflight(b,'owner')});
+  assert.equal(out.body.code,'curated_unresolved');assert.ok(out.body.resolutionDiagnostic.rejectionReasons.includes(expected));assert.equal(out.body.resolutionDiagnostic.workflowStatus,'ok');assert.equal(out.body.resolutionDiagnostic.resultCount,1);
+  assert.equal(out.body.choiceToken,undefined);const diagnostic=JSON.stringify(out.body.resolutionDiagnostic);assert.ok(!diagnostic.includes(row.entity_id));assert.ok(!diagnostic.includes('Different'));assert.ok(!diagnostic.includes(row.name));
+ }
+});
+test('needs-input diagnostics distinguish bound no-match, ambiguity and unbound metadata',async()=>{
+ const name=catalogue.find(e=>e.id==='real-03').name;
+ for(const [input,kind,reason] of [[name,'not_found','no_match'],[name,'ambiguous','ambiguous'],['Other query','not_found','unresolved']]){
+  const d={...describe(rows[0]),status:'needs_input',results:[],resolution:{issues:[{input,input_kind:'entity',field:'entity',scope:'urn:entity:place',kind,candidates:[]}]}};
+  const service=createCuratedService({run:async()=>({dispatches:1,data:d})}),b={...base,action:'curated-place',catalogueId:'real-03'},out=await service.execute(b,{key:'OFFLINE',owner:'owner',context:service.preflight(b,'owner')});
+  assert.equal(out.body.code,'curated_unresolved');assert.equal(out.body.resolutionDiagnostic.reason,reason);assert.equal(out.body.resolutionDiagnostic.candidateCount,0);
+ }
+});
+test('omitted hydrated address stays rejected even with matching selected metadata; diagnostic marks bound evidence only',async()=>{
+ const row=rows.find(r=>r.catalogueId==='real-03'),entry=catalogue.find(e=>e.id==='real-03');
+ for(const bound of [true,false]){
+  const d=describe(row);d.results=[{...row,properties:{}}];d.resolution.outcomes[0].input=bound?entry.name:'Other query';d.resolution.outcomes[0].match='exact';
+  const service=createCuratedService({run:async()=>({dispatches:2,data:d})}),b={...base,action:'curated-place',catalogueId:entry.id},out=await service.execute(b,{key:'OFFLINE',owner:'owner',context:service.preflight(b,'owner')});
+  assert.equal(out.body.code,'curated_unresolved');assert.equal(out.body.resolutionDiagnostic.boundSelectedCatalogueMatch,bound);assert.ok(out.body.resolutionDiagnostic.rejectionReasons.includes('address_missing'));
+ }
+});

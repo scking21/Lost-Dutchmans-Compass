@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-21",
+  "deployedComparisonRevision": "42d7f52e3894ca49a9db44bf508e319446decfad",
+  "comparisonOutcome": {
+    "attemptedIdentities": 1,
+    "confirmedIdentities": 0,
+    "attemptedRanks": 0,
+    "plannedRanks": 3,
+    "observedDispatches": 2,
+    "appReservedDispatches": 2,
+    "protocolReservedDispatches": 2,
+    "terminal": "blocked_identity",
+    "interpretation": "No usable exact identity through current app contract; retained evidence does not establish provider absence or exact mismatch cause."
+  },
+  "diagnosticPatch": {
+    "identityAcceptanceChanged": false,
+    "categories": [
+      "workflow status",
+      "bounded result and candidate counts",
+      "bound issue kind",
+      "invalid identity",
+      "type mismatch",
+      "interpretation identity mismatch",
+      "name mismatch",
+      "missing address",
+      "address mismatch",
+      "bound selected metadata catalogue match"
+    ],
+    "providerPayloadPublished": false,
+    "regressions": "Three new offline tests failed before implementation and passed after. No fallback or fuzzy identity matching added."
+  },
+  "incidentProbe": {
+    "status": "pending independent review and deployment",
+    "maximumDispatches": 2,
+    "scope": "One separate diagnostic place resolution. No confirmation, rank, substitution or retry; frozen comparison remains terminal."
+  },
+  "retainedEvidence": "Original receipt and scored blocked ledger retained privately. Render log window contained no entries; subprocess output was not persisted."
+}

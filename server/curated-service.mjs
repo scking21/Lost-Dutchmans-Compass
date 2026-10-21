@@ -1,6 +1,7 @@
 import {randomUUID,createHash} from 'node:crypto';
 import {catalogue} from '../public/catalogue.mjs';
 import {validateCataloguePlace} from './catalogue-pool.mjs';
+import {normalizeIdentity} from '../public/domain.mjs';
 import {runHarness,HARNESS_VERSION} from './harness.mjs';
 import {boundedProviderDetail} from './workflow.mjs';
 export const curatedActions=['curated-place','curated-signal','curated-confirm','curated-rank'];
@@ -14,6 +15,32 @@ const typeOk=(row,interpretation,type)=>{
  if(vals.some(v=>!['urn:entity',type,'urn:entity:'+type].includes(v)))return false;
  return vals.some(v=>[type,'urn:entity:'+type].includes(v))||equal(row?.entity_id,interpretation?.entity?.entityId)&&[type,'urn:entity:'+type].includes(interpretation.entity.type);
 };
+// Categories only: never copy provider names, IDs, addresses or free-text errors.
+function resolutionDiagnostic(d,name,type,entry){
+ const workflowStatus=['ok','partial','degraded','needs_input','empty','error'].includes(d.status)?d.status:'unknown';
+ const results=Array.isArray(d.results)?d.results:[],issues=Array.isArray(d.resolution?.issues)?d.resolution.issues:[];
+ const boundIssues=issues.filter(i=>i?.input===name&&i.input_kind==='entity'&&i.field==='entity'&&i.scope==='urn:entity:'+type);
+ const issueKind=boundIssues.length===1&&['not_found','ambiguous'].includes(boundIssues[0].kind)?boundIssues[0].kind:'unknown';
+ const candidates=boundIssues.flatMap(i=>Array.isArray(i.candidates)?i.candidates:[]);
+ const rejectionReasons=[];let boundSelectedCatalogueMatch=false;
+ if(results.length===1){
+  const row=results[0],resolved=d.interpretation?.entity;
+  if(!uuid(row?.entity_id))rejectionReasons.push('invalid_identity');
+  if(!typeOk(row,d.interpretation,type))rejectionReasons.push('type_mismatch');
+  if(resolved&&typeof resolved.entityId==='string'&&!equal(resolved.entityId,row?.entity_id))rejectionReasons.push('interpretation_identity_mismatch');
+  if(entry){
+   if(![entry.name,...entry.aliases].some(n=>normalizeIdentity(n)===normalizeIdentity(row?.name)))rejectionReasons.push('name_mismatch');
+   if(typeof row?.properties?.address!=='string'||!row.properties.address.trim())rejectionReasons.push('address_missing');
+   else if(normalizeIdentity(row.properties.address)!==normalizeIdentity(entry.address))rejectionReasons.push('address_mismatch');
+   const outcomes=d.resolution?.outcomes,outcome=Array.isArray(outcomes)&&outcomes.length===1?outcomes[0]:null,selected=outcome?.selected;
+   const bound=outcome?.input===name&&outcome.status==='resolved'&&['exact','semantic'].includes(outcome.match)&&equal(selected?.id,row?.entity_id)&&equal(selected?.id,resolved?.entityId);
+   boundSelectedCatalogueMatch=!!(bound&&validateCataloguePlace({entity_id:selected.id,name:selected.name,type:selected.type,subtype:selected.subtype,properties:{address:selected.address}},{},entry));
+   if(!validateCataloguePlace(row,d.interpretation,entry)&&!rejectionReasons.length)rejectionReasons.push('other_identity_check');
+  }
+ }else if(['ok','partial','degraded'].includes(workflowStatus))rejectionReasons.push('unexpected_result_count');
+ const reason=workflowStatus==='needs_input'?(issueKind==='not_found'?'no_match':issueKind==='ambiguous'?'ambiguous':'unresolved'):rejectionReasons.length?'identity_mismatch':workflowStatus==='empty'?'empty':workflowStatus==='error'?'provider_error':'unresolved';
+ return {workflowStatus,reason,resultCount:Math.min(results.length,6),resultCountTruncated:results.length>6,issueKind,boundIssueCount:Math.min(boundIssues.length,6),candidateCount:Math.min(candidates.length,6),candidateCountTruncated:candidates.length>6,candidateCatalogueMatchCount:entry?Math.min(6,candidates.filter(c=>validateCataloguePlace({entity_id:c?.id,name:c?.name,type:c?.type,subtype:c?.subtype,properties:{address:c?.address}},{},entry)).length):null,rejectionReasons,boundSelectedCatalogueMatch};
+}
 const publicIdentity=x=>({name:x.name,type:x.type,...(x.catalogueId?{catalogueId:x.catalogueId,address:x.address}:{}),...(x.detail?{detail:x.detail}:{}),...(x.visitWarning?{visitWarning:x.visitWarning}:{}),access:'unknown'});
 export function createCuratedService({now=()=>Date.now(),run=runHarness}={}){
  const records=new Map();
@@ -50,9 +77,9 @@ export function createCuratedService({now=()=>Date.now(),run=runHarness}={}){
      if(candidates.length<=5)options=candidates.flatMap(c=>{if(entry){const v=validateCataloguePlace({entity_id:c.id,name:c.name,type:c.type,subtype:c.subtype,properties:{address:c.address}},{},entry);return v?[{...v,type,visitWarning:entry.visitWarning}]:[];}return uuid(c.id)&&typeof c.name==='string'&&typeOk({entity_id:c.id,type:c.type,subtype:c.subtype},{},type)?[{entityId:c.id,name:c.name,type,detail:String(c.disambiguation||c.description||'').slice(0,200)}]:[];});
      if(entry&&options.length!==1)options=[];
     }
-    if(!options.length||new Set(options.map(o=>o.entityId.toLowerCase())).size!==options.length)return reply('curated_unresolved','No usable identity matched. Edit the favorite or choose another catalogue place; no substitute or automatic retry was used.',{workflowState:'needs_input'},422);
+    if(!options.length||new Set(options.map(o=>o.entityId.toLowerCase())).size!==options.length)return reply('curated_unresolved','No usable identity matched. Edit the favorite or choose another catalogue place; no substitute or automatic retry was used.',{workflowState:'needs_input',resolutionDiagnostic:resolutionDiagnostic(d,name,type,entry)},422);
     const choiceToken=save({kind:'choice',options,entryId:entry?.id},owner);
-    return reply('curated_choice','Review the identity and explicitly confirm it. No rank has run.',{choiceToken,choices:options.map(publicIdentity),workflowState:'needs_input'});
+    return reply('curated_choice','Review the identity and explicitly confirm it. No rank has run.',{choiceToken,choices:options.map(publicIdentity),workflowState:'needs_input',resolutionDiagnostic:{...resolutionDiagnostic(d,name,type,entry),reason:'matched'}});
    }
    if(b.action==='curated-confirm'){
     // Consume only after app-level concurrency/rate checks, never on busy responses.
