@@ -4,11 +4,13 @@ A taste-to-place prototype for first-time Mesa-area visitors, using the official
 
 ## Current revision and evidence
 
-The verified runtime revision is [`eedf07b161990c0df5059c988c52b6e101cfa86e`](https://github.com/scking21/Lost-Dutchmans-Compass/commit/eedf07b161990c0df5059c988c52b6e101cfa86e), tree `ef8546780d09134fdb5a73550fe2ae8f1ab5441f`, deployed on October 21, 2026. Its pre-publication offline suite passed 87 tests, including seven actual subprocess tests of the installed pinned CLI with synthetic, in-memory provider fixtures. The dated `evidence/confirmation-verification.json` records the state before live verification and is retained unchanged.
+The verified runtime revision is [`e9c725c96bb1b6d77f34676bbce3beac63a314b6`](https://github.com/scking21/Lost-Dutchmans-Compass/commit/e9c725c96bb1b6d77f34676bbce3beac63a314b6), tree `78e8b70570e59f5397ae2cba1ea9cf044091988c`, deployed on the existing free Render service on October 21, 2026 at 16:33 UTC. Independent review passed, and the full offline suite passed 110 tests, including eight installed pinned-CLI subprocess tests with synthetic provider fixtures.
 
-At 04:34–04:36 UTC on October 21, the deployed revision completed the bounded local-resolution → explicit identity-confirmation → two-place rank path. Desktop returned-card rendering and local shortlist, hide and restore controls were checked; those local controls made no additional provider calls. This establishes the feasibility of that one bounded run, not reliability across users or visitor usefulness. Private live receipts are not public fixtures. One synthetic development comparison found no demonstrated incremental benefit; it is not a same-model ablation or a real-visitor study.
+Two sequential fresh-session checks completed local resolution → explicit identity confirmation → two-place ranking: Jurassic Park (1993) in the cloud browser, and Nina Simone through an independent HTTP cookie jar. The browser also verified returned-card rendering and local shortlist, hide and restore with no extra provider calls. Each successful run observed ten provider dispatches within a twelve-dispatch reservation bound. This establishes working access for these checks, not unrestricted throughput, recommendation quality or future service availability. Mobile and cold-start recovery remain unverified.
 
-At 04:39 UTC, a fresh browser session could open the public demo but had zero remaining pilot capacity and disabled live actions. The current deployment therefore does not provide end-to-end judging access. No reset, allowance increase or further provider run is implied by these documentation updates. Mobile, cold-start recovery and independent multi-session live operation remain unverified.
+The preregistered four-profile diagnostic retained all outcomes: D1 (film), D2 (artist) and D4 (TV show) returned two ranked cards; D3 (book) stopped at cultural-identity ambiguity because neither offered match was the predeclared book. No favorite was substituted and no failed case was rerolled. Three complete Qloo-on/off pairs were assessed by two blinded native-model assessor replicates in both display orders: all twelve judgments were ties, with no order sensitivity or flagged hard failures. D3 was not scored. This test did not demonstrate a Qloo quality advantage; it is not real-visitor proof or evidence of equivalence.
+
+The earlier twelve-call shared testing ceiling is removed in judging mode. Initial verification on `3ebf4bdd` exposed overlapping subprocess timeouts on the free instance; both failed attempts remain in the evidence record. The current revision serializes live submissions, returns an explicit retryable busy state to competing requests, and uses bounded subprocess deadlines. No paid upgrade or new service was introduced. The historical exhausted 04:39 UTC pilot is not the current access state or a provider quota reading.
 
 Earlier source `64fd67a250c5ba882d2222caca2cc7b99d6174ad` supplies historical desktop describe→recommend evidence. The technically verified 106.6-second narrated screenshot walkthrough depicts that older discovery flow, not the new local-confirmation flow. Two later local-resolution pilots stopped unresolved before ranking; the older app did not retain enough issue detail to classify those failures. The successful newer run does not retroactively explain them. Public regression fixtures at the verified revision are synthetic; old public commits still retain response-derived material and that compliance concern remains unresolved.
 
@@ -29,7 +31,7 @@ This is a feasibility pilot with two choices, not evidence of audience usefulnes
 
 The existing path resolves a cultural favorite and requests up to three places using a public-city location filter. Returned addresses can be in neighboring cities. Broad results may be residential or unrelated to visitor needs. The local filter admits only matching runtime-reviewed identities; it does not invent catalogue recommendations. With no reviewed identity binding, no result passes that scope gate. Turning the scope off is explicit and shows a visitor-suitability warning.
 
-Changing taste may rerank a retained result set, using a session-bound candidate handle; changing destination requires fresh discovery. No LLM provider or generated itinerary is configured. The Qloo-off control honestly reports that the same-model comparison is unavailable; it is not a completed comparison experiment.
+Changing taste may rerank a retained result set, using a session-bound candidate handle; changing destination requires fresh discovery. No LLM provider or generated itinerary is configured. The in-app Qloo-off control honestly reports that a generator is unavailable. The separate frozen same-model diagnostic used an external evaluation harness; it does not add an in-app generator.
 
 ## Privacy and retention
 
@@ -41,7 +43,7 @@ Changing taste may rerank a retained result set, using a session-bound candidate
 
 ## Budget and safety
 
-### Judging access candidate (not yet deployed or live-verified)
+### Deployed judging access
 
 Production defaults to `ACCESS_MODE=judging`. The old shared 12-credit/three-submission testing ceiling no longer disables later judges. Existing `MAX_LIVE_RUNS` configuration does not activate pilot mode. Every explicit discovery/local resolution remains bounded by four provider dispatches, confirmation by one, and rank by seven. No automatic provider retries are introduced.
 
@@ -51,7 +53,7 @@ Provider 401/403 pauses further execution for the process; 429 pauses for at lea
 
 For an explicit bounded test, select `ACCESS_MODE=pilot`; its defaults remain 12 process reservations and three submissions, configurable with `MAX_DISPATCH_CREDITS` and `MAX_LIVE_RUNS`. Optional `LIVE_ACCESS_UNTIL` uses exact UTC format `YYYY-MM-DDTHH:mm:ss.sssZ`. There is no default expiry. Process counters reset on host restart and are not a durable account ledger. Failed/cancelled pilot reservations are never refunded.
 
-There are no startup calls, automatic retries, bulk catalogue queries or arbitrary API proxy. Place resolution uses exactly two fixed allowlisted names; client-supplied identity lists cannot expand it. Ambiguity never guesses: only the bounded exact-match case can offer a separate confirmation click. Each action needs its own click. The judging candidate removes the shared testing ceiling; deployment and multi-session live verification are still required before claiming restored access.
+There are no startup calls, automatic retries, bulk catalogue queries or arbitrary API proxy. Place resolution uses exactly two fixed allowlisted names; client-supplied identity lists cannot expand it. Ambiguity never guesses: only the bounded exact-match case can offer a separate confirmation click. Each action needs its own click. The deployed judging policy removes the shared testing ceiling; the two successful fresh-session checks are described above.
 
 The API enforces same-origin POSTs, JSON input validation, a 4 KiB request bound, restrictive browser CSP, session-bound candidate handles, concurrency limits and per-socket-address throttling. Origin checks protect against CSRF; they are not authentication. A shared reverse proxy can conservatively share a rate bucket.
 
@@ -67,21 +69,21 @@ Requires Node.js 22.19.0 or newer.
 - `npm test` runs the complete offline suite. The official-process tests need the installed pinned package and use injected in-memory provider fixtures, not live credentials.
 - The dependency-free suite can run with `node --test $(find tests -maxdepth 1 -name '*.test.mjs' ! -name 'official-process.test.mjs' | sort)`.
 
-Mock/DOM fixtures establish contracts, not live package compatibility, real-browser layout or recommendation quality. Current candidate test results are recorded in `evidence/confirmation-verification.json`; older verification files remain dated historical records.
+Mock/DOM fixtures establish contracts, not live package compatibility, real-browser layout or recommendation quality. Current access verification is recorded in `evidence/judging-access-verification.json`; `evidence/confirmation-verification.json` and older files remain dated historical records.
 
 ## Requirements and next evidence
 
 Use the event’s complete current requirements, not whichever page is least demanding. The kit’s CLI route is supported; broader agentic and Qloo-on/off evidence requirements still need explicit evidence. Historical reported agent use must not be confused with an in-app agent or a newly reproduced run. Do not claim comparative quality, an autonomous product, current access, unrestricted judge readiness or event eligibility from a successful API call.
 
-The next step is independent review, deployment and bounded multi-session verification of the judging-access candidate. The historical exhausted state above is not a current provider balance. Screenshots and the synthetic fixture lab do not replace a functional public demo. A subsequent audience study must use identical candidate facts and access caveats for both arms, preserve raw outcomes, and distinguish synthetic technical probes from real first-time visitors.
+Judge access has passed the bounded checks above. Broader reliability and visitor usefulness still need evidence. Screenshots and the synthetic fixture lab do not replace a functional public demo. A subsequent audience study must use identical candidate facts and access caveats for both arms, preserve raw outcomes, and distinguish synthetic technical probes from real first-time visitors.
 
 Project source is MIT. The pinned Qloo package is MIT; its license and notices are retained in `THIRD_PARTY_NOTICES.md` and `evidence/`. Do not remove third-party notices from runtime distributions.
 
 ## Submission references and remaining blockers
 
 - Public source: https://github.com/scking21/Lost-Dutchmans-Compass
-- Hosted demo: https://lost-dutchmans-compass.onrender.com (public page; live actions exhausted at the dated check above).
+- Hosted demo: https://lost-dutchmans-compass.onrender.com (public page with live judging actions verified on the revision above).
 - [Official rules](https://qloo.devpost.com/rules) require a working Qloo-integrated agentic tool, agent-framework application or existing-agent integration, public complete source with a detectable open-source license, a feature description and free unrestricted testing through the judging period.
 - The [event overview](https://qloo.devpost.com/) requires an externally published end-to-end demo and says a video is optional. The existing walkthrough is supplementary historical evidence.
 - The no-model official CLI route is implemented. A conversational/autonomous in-app agent is not implemented. Historical reported external browser-agent use is not a reproduced goal-driven agent run of the verified revision; agentic eligibility remains unestablished.
-- Current blockers include exhausted live access, the unresolved agentic-route evidence, historical response-data retention and unproven audience benefit. This is not a claim of submission readiness.
+- Remaining evidence gaps include the unresolved agentic-route evidence, historical response-data retention and unproven audience benefit. This is not a claim of submission readiness.

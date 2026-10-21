@@ -1,0 +1,124 @@
+{
+  "verifiedAt": "2026-10-21",
+  "runtimeCommit": "e9c725c96bb1b6d77f34676bbce3beac63a314b6",
+  "runtimeTree": "78e8b70570e59f5397ae2cba1ea9cf044091988c",
+  "host": "existing free Render service",
+  "deployId": "dep-dbcei1mi0phs73a38ch0",
+  "deployLiveAt": "2026-10-21T16:33:03.54349Z",
+  "independentReview": "PASS",
+  "offlineTests": {
+    "passed": 110,
+    "failed": 0,
+    "installedPinnedCliSubprocessTests": 8,
+    "liveProviderCalls": 0
+  },
+  "policy": {
+    "mode": "judging",
+    "sharedLifetimeTestCap": false,
+    "maxConcurrentLiveSubmissions": 1,
+    "operationDispatchBounds": {
+      "resolve": 4,
+      "confirm": 1,
+      "rank": 7
+    },
+    "providerAccountAllowance": "unknown",
+    "automaticProviderRetries": false
+  },
+  "accessChecks": [
+    {
+      "case": "D1",
+      "method": "cloud browser",
+      "outcome": "two ranked cards",
+      "observedDispatches": 10,
+      "reservedUpperBound": 12,
+      "localControls": "shortlist, hide and restore passed without calls"
+    },
+    {
+      "case": "D2",
+      "method": "independent HTTP cookie jar",
+      "outcome": "two ranked cards",
+      "observedDispatches": 10,
+      "reservedUpperBound": 12,
+      "elapsedSeconds": [
+        36.997,
+        18.707,
+        34.797
+      ]
+    }
+  ],
+  "priorFailures": {
+    "runtimeCommit": "3ebf4bdd23008fac6e721e05e23f0dfddce63d4c",
+    "D1": "rank process_timeout",
+    "D2": "catalogue_failed after incomplete subprocess",
+    "reservedUpperBound": 16,
+    "actualTotalDispatches": "unknown; timeout reports incomplete",
+    "preserved": true
+  },
+  "limitations": [
+    "Bounded checks do not establish sustained throughput or future availability.",
+    "Mobile and cold-start recovery unverified.",
+    "No real-visitor usefulness or individual enjoyment inference.",
+    "Private provider receipts are not public fixtures."
+  ],
+  "additionalFrozenDiagnostics": [
+    {
+      "case": "D3",
+      "method": "fresh HTTP cookie jar",
+      "resolve": "catalogue_choice",
+      "confirmation": "catalogue_resolved",
+      "rank": "choose_seed",
+      "returnedCardCount": 0,
+      "reservedDispatchUpperBound": 12,
+      "observedDispatches": 5,
+      "dispatchCountComplete": true,
+      "elapsedSeconds": [
+        35.038,
+        30.084,
+        19.805
+      ],
+      "limitation": "Neither returned book identity matched the predeclared The Hobbit."
+    },
+    {
+      "case": "D4",
+      "method": "fresh HTTP cookie jar",
+      "resolve": "catalogue_choice",
+      "confirmation": "catalogue_resolved",
+      "rank": "results",
+      "returnedCardCount": 2,
+      "reservedDispatchUpperBound": 12,
+      "observedDispatches": 10,
+      "dispatchCountComplete": true,
+      "elapsedSeconds": [
+        35.541,
+        22.793,
+        37.895
+      ]
+    }
+  ],
+  "cumulativeReservedUpperBoundAllVersions": 64,
+  "observedDispatchesCurrentRevision": 35,
+  "actualDispatchesAllVersions": "unknown because initial timeout reports were incomplete",
+  "finalReadiness": {
+    "liveExecutionAllowed": true,
+    "activeSubmissions": 0,
+    "livePauseReason": null,
+    "processStartedAt": "2026-10-21T16:32:53.266Z",
+    "checkMethod": "read-only status after all cases; no provider dispatch"
+  },
+  "frozenSyntheticComparison": {
+    "profiles": 4,
+    "completePairs": 3,
+    "unresolvedCases": [
+      "D3"
+    ],
+    "assessorReplicates": 2,
+    "displayOrdersPerReplicate": 2,
+    "blindedJudgments": 12,
+    "ties": 12,
+    "orderSensitivity": false,
+    "flaggedHardFailures": 0,
+    "conclusion": "No demonstrated incremental recommendation-quality benefit in this diagnostic. Not real-visitor proof or evidence of equivalence.",
+    "votesLockedBeforeDecoding": true,
+    "generator": "external evaluation harness; not configured in the app"
+  }
+}
