@@ -1,19 +1,26 @@
 import {catalogue} from './catalogue.mjs';
-export function mountCurated({document,fetch,setTimeout,clearTimeout,AbortController}){
+export function mountCurated({document,fetch,setTimeout,clearTimeout,AbortController,now=Date.now}){
  const $=id=>document.getElementById(id),form=$('curated-form');if(!form)return;
- const places=[],tastes=[];let choice=null,pending=false,enabled=false;
+ const places=[],tastes=[];let choice=null,pending=false,enabled=false,expiryTimer=null;
+ const expired=item=>!Number.isFinite(item.expiresAt)||item.expiresAt<=now();
+ const selectedTastes=()=>tastes.filter(t=>t.selected);
+ const rankExpired=()=>[...places,...selectedTastes()].some(expired);
  const el=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n;};
  const eligible=catalogue.filter(c=>!c.blocked&&c.address);
  for(const c of eligible){const o=el('option',`${c.name} · ${c.address} · ${c.visitWarning}`);o.value=c.id;$('curated-place').append(o);}
  function render(){
+  clearTimeout(expiryTimer);const future=[...places,...tastes].map(i=>i.expiresAt).filter(t=>Number.isFinite(t)&&t>now());
+  if(future.length){expiryTimer=setTimeout(render,Math.min(...future)-now()+1);expiryTimer?.unref?.();}
+  const stale=[...places,...tastes].filter(expired);$('curated-expiry').textContent=stale.length?'Expired confirmation: remove each expired item, then explicitly resolve and confirm it again. Each refresh can use up to 3 calls. Other selections stay in place; nothing refreshes automatically.':'';
   for(const id of ['curated-place','curated-type','curated-favorite'])$(id).disabled=pending;
   $('curated-confirm').disabled=pending||!enabled||!choice||$('curated-choice').value==='';
   $('curated-add-place').disabled=pending||!enabled||places.length>=4;
   $('curated-add-taste').disabled=pending||!enabled||tastes.length>=2;
-  $('curated-rank').disabled=pending||!enabled||places.length<2||!tastes.some(t=>t.selected);
+  $('curated-rank').disabled=pending||!enabled||places.length<2||!selectedTastes().length||rankExpired();
+  $('curated-rank').textContent=places.length>=2&&selectedTastes().length?`Rank confirmed choices · up to ${places.length+selectedTastes().length+1} calls`:'Rank confirmed choices · choose at least 2 places and 1 favorite';
   $('curated-none').disabled=pending;$('curated-clear').disabled=pending;
   for(const [list,id,label]of [[places,'curated-places','place'],[tastes,'curated-tastes','favorite']]){
-   $(id).replaceChildren();for(const item of list){const row=el('li',item.identity.name+(item.identity.address?' · '+item.identity.address:' · '+item.identity.type)+(item.identity.visitWarning?' · Catalogue warning: '+item.identity.visitWarning:''));if(label==='favorite'){const toggle=el('input','');toggle.type='checkbox';toggle.checked=item.selected;toggle.disabled=pending;toggle.setAttribute('aria-label','Use confirmed favorite: '+item.identity.name);toggle.addEventListener('change',()=>{item.selected=toggle.checked;$('curated-results').replaceChildren();render();});row.append(toggle);}
+   $(id).replaceChildren();for(const item of list){const row=el('li',(expired(item)?'Expired confirmation · ':'')+item.identity.name+(item.identity.address?' · '+item.identity.address:' · '+item.identity.type)+(item.identity.visitWarning?' · Catalogue warning: '+item.identity.visitWarning:''));if(label==='favorite'){const toggle=el('input','');toggle.type='checkbox';toggle.checked=item.selected;toggle.disabled=pending;toggle.setAttribute('aria-label','Use confirmed favorite: '+item.identity.name);toggle.addEventListener('change',()=>{item.selected=toggle.checked;$('curated-results').replaceChildren();render();});row.append(toggle);}
    const remove=el('button',`Remove ${label}: ${item.identity.name}`);remove.type='button';remove.disabled=pending;remove.addEventListener('click',()=>{list.splice(list.indexOf(item),1);$('curated-results').replaceChildren();render();});row.append(remove);$(id).append(row);}
   }
  }
@@ -36,7 +43,7 @@ export function mountCurated({document,fetch,setTimeout,clearTimeout,AbortContro
   const body={destination:'Mesa',favorite:action==='curated-signal'?$('curated-favorite').value.trim():'Confirmed identities',type:$('curated-type').value,verifiedOnly:false,mode:'qloo',action,...extra};
   try{const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});const data=await response.json();$('curated-status').textContent=data.message||data.code;$('curated-audit').textContent=JSON.stringify(data,null,2);
    if(data.code==='curated_choice'){choice={token:data.choiceToken,action};$('curated-choice').replaceChildren();const blank=el('option','Choose the intended identity explicitly');blank.value='';blank.disabled=true;blank.selected=true;$('curated-choice').append(blank);data.choices.forEach((c,i)=>{const o=el('option',`${c.name} · ${c.type}${c.address?' · '+c.address:''}${c.detail?' · '+c.detail:''}${c.visitWarning?' · Catalogue warning: '+c.visitWarning:''}`);o.value=String(i);$('curated-choice').append(o);});$('curated-choice').value='';$('curated-choice-box').hidden=false;$('curated-choice').focus();}
-   else if(data.code==='curated_confirmed'){const list=data.identity.type==='place'?places:tastes;if(!list.some(x=>data.identity.catalogueId?x.identity.catalogueId===data.identity.catalogueId:x.identity.name===data.identity.name&&x.identity.type===data.identity.type))list.push({token:data.identityToken,identity:data.identity,selected:true});clearChoice();}
+   else if(data.code==='curated_confirmed'){const list=data.identity.type==='place'?places:tastes;if(!list.some(x=>data.identity.catalogueId?x.identity.catalogueId===data.identity.catalogueId:x.identity.name===data.identity.name&&x.identity.type===data.identity.type))list.push({token:data.identityToken,identity:data.identity,selected:true,expiresAt:Date.parse(data.identityExpiresAt)});clearChoice();}
    else if(!['busy','budget'].includes(data.code)&&action==='curated-confirm')clearChoice();
    showResults(data);
   }catch{ $('curated-status').textContent='The response could not be confirmed. No automatic retry was made. Check readiness before another explicit action.';}
@@ -49,7 +56,7 @@ export function mountCurated({document,fetch,setTimeout,clearTimeout,AbortContro
  $('curated-confirm').addEventListener('click',()=>{if(!choice||$('curated-choice').value==='')return;request('curated-confirm',{choiceToken:choice.token,choiceIndex:Number($('curated-choice').value)});});
  $('curated-none').addEventListener('click',()=>{const source=choice?.action;clearChoice();$('curated-status').textContent='No identity was selected and no request was sent. Edit the favorite or choose another catalogue place.';$(source==='curated-place'?'curated-place':'curated-favorite').focus();});
  for(const id of ['curated-favorite','curated-type','curated-place'])$(id).addEventListener('input',()=>{if(!pending)clearChoice();});
- $('curated-rank').addEventListener('click',()=>{if(places.length<2||!tastes.some(t=>t.selected))return;request('curated-rank',{placeTokens:places.map(p=>p.token),tasteTokens:tastes.filter(t=>t.selected).map(t=>t.token)});});
+ $('curated-rank').addEventListener('click',()=>{if(pending||places.length<2||!selectedTastes().length)return;if(rankExpired()){render();$('curated-status').textContent='Ranking was not sent. Remove expired items, then explicitly resolve and confirm them again.';return;}request('curated-rank',{placeTokens:places.map(p=>p.token),tasteTokens:tastes.filter(t=>t.selected).map(t=>t.token)});});
  $('curated-clear').addEventListener('click',()=>{if(pending)return;places.length=0;tastes.length=0;clearChoice();$('curated-results').replaceChildren();$('curated-status').textContent='Local selections cleared. No provider request was sent.';});
  readiness();return {request,places,tastes};
 }
