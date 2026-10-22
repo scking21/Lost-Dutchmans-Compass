@@ -1,0 +1,51 @@
+{
+  "dateUTC": "2026-10-22",
+  "runtimeCommit": "dcda6b57869a474865524426a397a701f55fad30",
+  "runtimeTree": "6b1bf337f3c025b7cdfa66124357b8450b3ba195",
+  "deployment": "existing free service, live before rehearsal",
+  "testEnvironment": {
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "officialHarness": "0.1.26"
+  },
+  "cleanInstall": {
+    "normalLifecycle": "PASS",
+    "dockerProductionFlags": "PASS"
+  },
+  "tests": {
+    "passed": 149,
+    "failed": 0,
+    "skipped": 0,
+    "independentRerun": "149/149 PASS"
+  },
+  "live": {
+    "browser": "dot cloud Chrome desktop over HTTPS",
+    "sessions": 1,
+    "explicitOperations": 9,
+    "resolveConfirmPairs": 4,
+    "rankOperations": 1,
+    "observedDispatches": 15,
+    "reservedUpperBound": 17,
+    "allCountsComplete": true,
+    "retries": 0,
+    "substitutions": 0,
+    "returnedPlaces": 2,
+    "submittedPlaces": 3,
+    "omittedPlaces": 1,
+    "separateUnrankedCard": "PASS; no numerical affinity or provider position",
+    "localShortlist": "PASS for returned and omitted cards",
+    "localInterest": "PASS; preserves order and affinities",
+    "localClear": "PASS; zero cards, confirmations removed, ranking disabled"
+  },
+  "evidenceLimits": [
+    "Film year selection was operator-observed; minimal retained audit does not independently encode it.",
+    "Local interactions supported by source tests and displayed unchanged audit, not a separate network capture.",
+    "Functional result does not prove recommendation quality or future availability."
+  ],
+  "remainingGaps": {
+    "mobile": "blocked by managed browser device-emulation policy",
+    "coldStart": "unobserved; not forced",
+    "sameModelAblation": "no generator configured",
+    "historicalPublicDataCleanup": "separate approval gate"
+  }
+}
