@@ -1,5 +1,22 @@
 # Lost Dutchman’s Compass
 
+## Judge start here
+
+- **Public demo:** https://lost-dutchmans-compass.onrender.com
+- **Complete source:** https://github.com/scking21/Lost-Dutchmans-Compass · [MIT license](LICENSE) · [third-party notices](THIRD_PARTY_NOTICES.md).
+- **Intended platform:** desktop web browser. The latest hosted rehearsal used cloud Chrome over HTTPS; mobile and accessibility coverage remain incomplete.
+- **What it does:** helps a first-time Mesa-area visitor compare a small, explicitly confirmed set of places using one or two cultural favorites. Qloo supplies aggregate ranking; the visitor or external browser agent decides what to shortlist. No in-app conversational model or itinerary generator is configured.
+
+1. Open **Build a broader Mesa-area comparison** and wait for the readiness message. Optional travel interests show local catalogue guidance without calling Qloo.
+2. Choose two to four catalogue places. For each, click **Resolve selected place**, inspect the returned name/address/type, select the exact intended identity, then click **Confirm selected identity**. Stop or choose **None of these match** if no match is suitable.
+3. Resolve and explicitly confirm one or two public cultural favorites, checking the intended work/version when offered. Select the confirmed-favorite checkbox(es) you want to use.
+4. Click **Rank confirmed choices** once. Its label gives the exact upper bound, `places + selected favorites + 1`, at most seven provider dispatches. Read returned positions, missing-option coverage and **Inspect this operation’s evidence**. Omitted choices stay separately unranked; missing explanations stay missing.
+5. Add cards to or remove them from your local shortlist. Use official venue links to check current visitor information independently. **Clear local selections** resets the comparison without calling Qloo.
+
+Each resolve allows at most two dispatches and each confirmation one. Four submissions per minute per session/socket pair, a separate socket limit and one live submission at a time apply; this is not unlimited provider usage. Wait through a displayed busy/rate pause before choosing a new explicit attempt. Confirmations expire after 15 minutes; remove, resolve and confirm an expired identity again. Authentication pauses require owner recovery, described below. Never replace an unmatched identity or retry a failed evaluation silently.
+
+The actual agentic-tool route is an **external browser-capable agent operating these visible controls and interpreting returned states**, backed by the official server-side CLI. [Workflow and evidence](docs/tool-use.md) distinguish those agent decisions from Qloo output. The October 22 rehearsal returned 2 of 3 places with 15 reported dispatches against 17 reserved. It demonstrates a bounded functional workflow, not a comparative quality win, sustained availability or organizer acceptance. The earlier blinded comparison was all ties. See [the dated verification record](evidence/october-22-verification.json).
+
 ## October 22 verification and defensive fixes
 
 A clean lockfile install on Node 24.19.0 / npm 11.9.0 recovered the pinned official CLI 0.1.26. The previous source passed all 144 tests, including the nine previously blocked official-process cases. Independent adversarial review then identified same-title favorite deduplication and truncation-before-redaction edge cases. This revision uses session-scoped opaque identity equality for confirmed favorites, redacts provider display text before bounding it, and expires legacy candidate sets at exactly fifteen minutes. Explicit reconfirmation refreshes and selects the matching favorite; different identities sharing a title stay separate. The equality marker is never accepted as authorization.
@@ -105,7 +122,13 @@ Requires Node.js 22.19.0 or newer.
 - Configure `QLOO_API_KEY` only through an approved server secret flow and set `APP_ORIGIN` to the deployed origin (or `http://localhost:3000` locally). Supply these as process environment variables; `npm start` does not automatically load `.env.example` or a `.env` file.
 - `npm start` serves the app; it makes no Qloo call until an explicit live action.
 - `npm test` runs the complete offline suite. The official-process tests need the installed pinned package and use injected in-memory provider fixtures, not live credentials.
-- The dependency-free suite can run with `node --test $(find tests -maxdepth 1 -name '*.test.mjs' ! -name 'official-process.test.mjs' | sort)`.
+- The dependency-free suite can run with `node --test $(find tests -maxdepth 1 -name '*.test.mjs' ! -name 'official-process.test.mjs' ! -name 'curated-official.test.mjs' | sort)`.
+
+### Server configuration and recovery
+
+Local setup is `npm ci`, configure the process environment, then `npm start`; open `http://localhost:3000`. Use an existing Qloo hackathon credential in `QLOO_API_KEY` through your server’s secret manager or a private local environment mechanism. `APP_ORIGIN` must exactly match the browser origin, including scheme and port; `PORT` defaults to 3000. `.env.example` is a variable reference, not an automatically loaded secrets file. Do not commit credentials or put them in client code. No model key is required. Installing/running the offline tests needs no live Qloo key; live actions require a valid server key and provider allowance.
+
+`GET /api/status` is a no-provider-call readiness check: inspect `configured`, `liveExecutionAllowed`, `livePauseReason` and `providerRetryAt`. `configured: true` only means a key is present, not that it is valid. A 401/403 provider response latches an authentication pause in the server process. The owner must check/correct the existing server credential and restart that process; refreshing the browser alone cannot clear it. Restarting loses in-memory confirmations and retained candidates, so reload and explicitly resolve/confirm again before a new rank. Do not retry until the credential problem is addressed. Rate-limit pauses instead honor the displayed retry time and need a new explicit action; no automatic provider retry runs. An uncertain process-termination pause also needs owner investigation before restart. No recovery or restart is performed by this documentation update.
 
 Mock/DOM fixtures establish contracts, not live package compatibility, real-browser layout or recommendation quality. Current access verification is recorded in `evidence/judging-access-verification.json`; `evidence/confirmation-verification.json` and older files remain dated historical records.
 
