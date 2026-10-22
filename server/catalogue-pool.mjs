@@ -80,7 +80,7 @@ export async function confirmCatalogue(b,{key,signal,choiceContext,run=runHarnes
 }
 export function createCatalogueSessions(now=()=>Date.now()){
  const sets=new Map(),choices=new Map(),generations=new Map();
- const prune=()=>{for(const map of [sets,choices,generations])for(const [id,s]of map)if(now()-s.created>900000)map.delete(id);};
+ const prune=()=>{for(const map of [sets,choices,generations])for(const [id,s]of map)if(now()-s.created>=900000)map.delete(id);};
  const remember=(map,context,owner)=>{prune();if(map.size>=1000)map.delete(map.keys().next().value);const id=randomUUID();map.set(id,{context:structuredClone(context),owner,created:now()});return id;};
  const get=(map,id,b,owner)=>{prune();const s=map.get(id);if(!s||s.owner!==owner)throw Error('Local identity context expired or unknown. Resolve it again.');if(b.destination.trim().toLowerCase()!=='mesa')throw Error('Local shortlist supports Mesa only.');return structuredClone(s.context);};
  return {

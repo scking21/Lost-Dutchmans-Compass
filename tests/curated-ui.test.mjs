@@ -71,3 +71,12 @@ test('omission rendering accepts only submitted catalogue IDs and never duplicat
 test('zero returned ranks still show every submitted omitted option without a fake position',async()=>{
  const ui=await mount(()=>({code:'curated_results',confirmedTastes:[],candidateCount:2,explanationNote:'',submittedCatalogueIds:['real-03','real-01'],omittedCatalogueIds:['real-03','real-01'],cards:[]}));await ui.mounted.request('curated-rank');const cards=ui.elements.get('curated-results').children.filter(e=>e.className==='card');assert.equal(cards.length,2);for(const c of cards){assert.match(textOf(c),/Unranked/);assert.doesNotMatch(textOf(c),/undefined|not a probability/);}await ui.click('clear');assert.equal(ui.elements.get('curated-results').children.length,0);const history=interestToggle(ui,'history');history.checked=true;history.listeners.change();assert.equal(ui.elements.get('curated-results').children.length,0);assert.equal(ui.provider().length,1);
 });
+
+test('distinct same-title favorites survive, while explicit reconfirmation refreshes only the same identity',async()=>{
+ let n=0;const replies=[['first','key-a'],['second','key-b'],['refreshed','key-a']];
+ const ui=await mount(()=>{const [identityToken,identityKey]=replies[n++];return {code:'curated_confirmed',identityToken,identityKey,identity:{name:'Shared title',type:'movie'},identityExpiresAt:new Date(Date.now()+900000+n).toISOString()};});
+ for(let i=0;i<3;i++)await ui.mounted.request('curated-confirm',{choiceToken:'explicit-'+i,choiceIndex:0});
+ assert.equal(ui.mounted.tastes.length,2);assert.deepEqual(ui.mounted.tastes.map(x=>x.token),['refreshed','second']);assert.equal(ui.provider().length,3);
+ ui.mounted.places.push(...[1,2].map(n=>({token:'place'+n,identity:{name:'Place '+n,type:'place'},expiresAt:Date.now()+900000})));
+ ui.elements.get('curated-choice').listeners.change();assert.match(ui.elements.get('curated-rank').textContent,/up to 5 calls/);
+});

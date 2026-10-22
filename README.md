@@ -1,6 +1,12 @@
 # Lost Dutchman’s Compass
 
-## Deployed local travel interests
+## October 22 verification and defensive fixes
+
+A clean lockfile install on Node 24.19.0 / npm 11.9.0 recovered the pinned official CLI 0.1.26. The previous source passed all 144 tests, including the nine previously blocked official-process cases. Independent adversarial review then identified same-title favorite deduplication and truncation-before-redaction edge cases. This revision uses session-scoped opaque identity equality for confirmed favorites, redacts provider display text before bounding it, and expires legacy candidate sets at exactly fifteen minutes. Explicit reconfirmation refreshes and selects the matching favorite; different identities sharing a title stay separate. The equality marker is never accepted as authorization.
+
+All 149 offline tests pass, including five new regression tests that fail against the previous source. These results do not establish live provider coverage, recommendation quality or event eligibility. The later hosted end-to-end rehearsal is not claimed here. Mobile rendering remains unverified: the cloud browser's managed policy blocks DevTools/device-emulation access. No policy bypass was attempted. Historical provider-data cleanup remains separate.
+
+## Previously deployed local travel interests
 
 This revision adds optional History, Legends and local lore, and Nature and outdoors checkboxes to the broader comparison. These are local catalogue-topic guidance, not extra Qloo inputs, a combined score, or an automatic boost. Every eligible place stays selectable; returned Qloo positions and affinities stay unchanged. History matches use explicit human-history catalogue categories; natural history is a separate nature topic. Legend evidence is limited to Goldfield and Superstition Mountain Lost Dutchman Museum, using their linked official Attractions and About Us pages checked October 21, 2026. This does not label Arizona Museum of Natural History or Usery as legend attractions.
 
@@ -12,7 +18,7 @@ A taste-to-place prototype for first-time Mesa-area visitors, using the official
 
 ## Current revision and evidence
 
-The deployed runtime is [`00089a4b1ac4630566e8832b30d22c1db92aeb57`](https://github.com/scking21/Lost-Dutchmans-Compass/commit/00089a4b1ac4630566e8832b30d22c1db92aeb57), reviewed tree `f821750bc7f8f3ad0c33804996b49bd31f15fd7b`. Render deploy `dep-dbcirk6i0phs73evbt10` reached live on the existing free service on October 21, 2026 at 21:26:37 UTC. Independent exact-source review passed; current local test results and the nine missing-harness limitations are stated above. The established tan CSS is unchanged. No provider calls were made to implement, deploy or check this revision.
+The previously verified October 21 runtime is [`00089a4b1ac4630566e8832b30d22c1db92aeb57`](https://github.com/scking21/Lost-Dutchmans-Compass/commit/00089a4b1ac4630566e8832b30d22c1db92aeb57), reviewed tree `f821750bc7f8f3ad0c33804996b49bd31f15fd7b`. Render deploy `dep-dbcirk6i0phs73evbt10` reached live on the existing free service on October 21, 2026 at 21:26:37 UTC. Independent exact-source review passed; the then-current local test results and missing-harness limitations are preserved above. The established tan CSS is unchanged. No provider calls were made to implement, deploy or check this revision.
 
 Post-deploy HTTPS browser verification covered the desktop viewport (1173 × 751): the discovery anchor, all three local interest controls, unchanged six selectable venues, no automatic identity selection, Clear/reset and rechecking an interest without reviving results. History/Legends identified the documented Goldfield and Superstition Mountain Museum topics; Nature included the arboretum, natural-history museum and Usery. The readiness message and current About wording were visible. The page had no horizontal overflow or app-origin console errors; extension metadata errors were unrelated to the app. The audit remained “No provider operation yet.” No resolve, confirm or rank action was taken. Mobile, live provider ranking, and rendered omitted-result/shortlist behavior were not retested; omitted-card behavior is covered by offline DOM tests.
 

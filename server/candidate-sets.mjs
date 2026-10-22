@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 export function createCandidateSets(now=()=>Date.now()){
  const sets=new Map();
- const prune=()=>{for(const [id,v]of sets)if(now()-v.created>15*60000)sets.delete(id);};
+ const prune=()=>{for(const [id,v]of sets)if(now()-v.created>=15*60000)sets.delete(id);};
  return {
   remember(body,owner){prune();if(body.mode!=='qloo'||!body.cards?.length||body.brief.verifiedOnly)return null;if(sets.size>=1000)sets.delete(sets.keys().next().value);const id=randomUUID();sets.set(id,{owner,created:now(),requestId:body.requestId,brief:structuredClone(body.brief),cards:structuredClone(body.cards),seed:structuredClone(body.seed)});return id;},
   resolve(b,owner){prune();const previous=sets.get(b.candidateSetId);if(!previous||previous.owner!==owner)throw Error('Candidate set expired or unknown. Discover places again.');

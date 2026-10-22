@@ -64,3 +64,19 @@ test('independently documented exact Goldfield alias requires the same address, 
   assert.equal(out.body.code,'curated_choice');assert.equal(out.body.identityToken,undefined);assert.equal(calls.length,1);const confirm={...base,action:'curated-confirm',choiceToken:out.body.choiceToken,choiceIndex:0},done=await service.execute(confirm,{key:'OFFLINE',owner:'o',context:service.preflight(confirm,'o')});assert.equal(done.body.code,'curated_confirmed');assert.equal(done.body.identity.catalogueId,entry.id);assert.equal(done.body.identity.name,alias);assert.equal(calls.length,2);
  }
 });
+
+test('opaque confirmation equality is session scoped and distinguishes same-name entities',async()=>{
+ const s=setup(),a=await confirmed(s,'curated-signal'),again=await confirmed(s,'curated-signal');assert.equal(a.identityKey,again.identityKey);assert.notEqual(a.identityToken,again.identityToken);assert.match(a.identityKey,/^[a-f0-9]{64}$/);
+ const other=await s.exec({action:'curated-signal'},'other');const otherConfirmed=await s.exec({action:'curated-confirm',choiceToken:other.body.choiceToken,choiceIndex:0},'other');assert.notEqual(a.identityKey,otherConfirmed.body.identityKey);
+ let selected=0;const twins=[20,22].map(n=>({entity_id:id(n),name:'Same film',type:'movie',properties:{}}));
+ const svc=createCuratedService({run:async(op,input)=>({dispatches:1,data:describe(twins.find(r=>r.entity_id===input.entity)||twins[selected])})});
+ const exec=async b=>svc.execute({...base,...b},{key:'OFFLINE',owner:'o',context:svc.preflight({...base,...b},'o')});const keys=[];
+ for(selected=0;selected<2;selected++){const c=await exec({action:'curated-signal'});const d=await exec({action:'curated-confirm',choiceToken:c.body.choiceToken,choiceIndex:0});assert.equal(d.body.code,'curated_confirmed');keys.push(d.body.identityKey);}
+ assert.notEqual(keys[0],keys[1]);
+});
+test('curated signal and ranking detail redact synthetic secrets before truncation',async()=>{
+ const key='SYNTHETIC_BOUNDARY_SECRET_0123456789',secret='x'.repeat(195)+key;let phase='signal';
+ const service=createCuratedService({run:async(op,input)=>({dispatches:1,data:op==='describe'?describe({...rows.at(-2),properties:{description:secret}}):{operation:'rank',schema_version:'1.0-preview.1',status:'ok',execution:{correlation_id:'fixture'},results:rows.slice(0,2).map(r=>({...r,explainability:{['x'.repeat(75)+key]:'x'.repeat(495)+key}}))}})});
+ const b={...base,action:'curated-signal'},out=await service.execute(b,{key,owner:'o',context:service.preflight(b,'o')});assert.equal(out.body.code,'curated_choice');assert.ok(!JSON.stringify(out).includes('SYNTH'));
+ const places=rows.slice(0,2).map(r=>({entityId:r.entity_id,catalogueId:r.catalogueId}));const ranked=await service.execute({...base,action:'curated-rank'},{key,owner:'o',context:{places,tastes:[{entityId:id(20),name:'Film',type:'movie'}],reservation:4}});assert.equal(ranked.body.code,'curated_results');assert.ok(!JSON.stringify(ranked).includes('SYNTH'));
+});

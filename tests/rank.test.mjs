@@ -17,3 +17,11 @@ test('redacted provider object key collisions preserve both bounded values safel
 test('actual returned per-result explanation survives bounded card rendering input without inventing missing detail',async()=>{
  const {recommend}=await import('../server/workflow.mjs');let n=0;const id='11111111-1111-4111-8111-111111111111';const out=await recommend({favorite:'Fixture',type:'movie',destination:'Mesa',mode:'qloo',verifiedOnly:false},{key:'OFFLINE',run:async()=>({dispatches:1,data:++n===1?{operation:'describe',schema_version:'1.0-preview.1',status:'ok',execution:{correlation_id:'fixture'},results:[{entity_id:id,name:'Fixture',type:'movie'}]}:{operation:'recommend',schema_version:'1.0-preview.1',status:'ok',execution:{correlation_id:'fixture'},results:[{entity_id:id,name:'Synthetic place',type:'place',explainability:{signal:'Provider detail fixture'}}]}})});assert.equal(out.body.cards[0].providerResultExplanation.signal,'Provider detail fixture');
 });
+
+test('all discovery text and per-result detail redact synthetic secrets before truncating',async()=>{
+ const key='SYNTHETIC_BOUNDARY_SECRET_0123456789',reflected=n=>'x'.repeat(n-5)+key;
+ const run=async op=>({dispatches:1,data:envelope(op,op==='describe'?[{...seed,name:reflected(200)}]:[{entity_id:ids[0],name:reflected(200),type:'place',properties:{address:reflected(300)},explainability:{[reflected(80)]:reflected(500)}}],{execution:{correlation_id:reflected(200)}})});
+ const out=await recommend(brief,{key,run});assert.equal(out.body.code,'results');assert.ok(!JSON.stringify(out).includes('SYNTH'));assert.match(out.body.cards[0].name,/\[reda/);assert.ok(Object.keys(out.body.cards[0].providerResultExplanation)[0].length<=80);
+ const ambiguous=await recommend(brief,{key,run:async op=>({dispatches:1,data:{...envelope(op,[]),status:'needs_input',resolution:{issues:[{candidates:[{id:ids[0],name:reflected(200),type:'movie',disambiguation:reflected(200)}]}]}}})});assert.equal(ambiguous.body.code,'choose_seed');assert.ok(!JSON.stringify(ambiguous).includes('SYNTH'));
+});
+test('candidate set expires at the exact fifteen-minute boundary',()=>{let time=0;const s=createCandidateSets(()=>time);const candidateSetId=s.remember(previous,'owner');time=899999;assert.ok(s.resolve({...rank,candidateSetId},'owner'));time=900000;assert.throws(()=>s.resolve({...rank,candidateSetId},'owner'));});
